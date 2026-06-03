@@ -1,4 +1,4 @@
-# Python cache
+﻿# Python cache
 __pycache__/
 *.pyc
 
@@ -18,3 +18,6 @@ env/
 
 # Environment variables
 .env
+
+# Large datasets (exceed GitHub 100MB limit)
+Deep-Learning/creditcard.csv
