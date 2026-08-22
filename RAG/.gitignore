@@ -1,0 +1,55 @@
+# =============================================================================
+# RAG project — ignores SPECIFIC to this subtree.
+#
+# The repo root (../.gitignore) already covers: __pycache__, *.pyc, .venv/,
+# .ipynb_checkpoints/, .vscode/, .cursor/, .env, MENTOR_PROGRESS.md.
+# Only what it does NOT cover belongs here.
+# =============================================================================
+
+# --- Qdrant local volume — 889 MB ------------------------------------------
+# THE ONE THAT WOULD BREAK THE PUSH. GitHub rejects files over 100 MB, and this
+# is prototype vectors from ONE document in collections named reg_*_test.
+# Derived data: rebuildable from the corpus, and stale the moment the chunker
+# changes. A vector store never belongs in git.
+qdrant_storage/
+
+# --- parse cache -------------------------------------------------------------
+# Gzipped DoclingDocuments keyed by source hash AND docling version. Derived;
+# regenerate with `python -m regrag.ingestion.cache --warm`. Would also churn on
+# every Docling upgrade, since the version is part of the filename.
+data/processed/
+
+# --- test / build artefacts --------------------------------------------------
+.pytest_cache/
+*.egg-info/
+*.tmp
+*.json.gz.tmp
+
+# =============================================================================
+# SOURCE PDFs — EXCLUDED BY DECISION (2026-08-21)
+# =============================================================================
+# 22 MB of published regulation, and redistribution terms differ sharply by
+# publisher:
+#
+#   Fed / eCFR / SR letters   US government works — no restriction
+#   BIS / BCBS                covers state "Brief excerpts may be reproduced or
+#                             translated provided the source is stated".
+#                             A complete 323-page chapter is not a brief excerpt.
+#   IFRS 9 (IFRS Foundation)  copyright asserted and actively enforced
+#   PRA / Bank of England     usually Open Government Licence, attribution
+#
+# CONSEQUENCE: a fresh clone has no corpus, so registry validation and every
+# file-resolving test FAIL until the PDFs are fetched. Each registry row carries
+# a `source_url`, so scripts/fetch_corpus.py can rebuild the corpus from the
+# registry — which is a better artefact than the files themselves, because it
+# makes the corpus REPRODUCIBLE rather than merely present.
+data/**/*.pdf
+
+# Keep the directory structure so a clone knows where the corpus goes.
+!data/**/.gitkeep
+
+# =============================================================================
+# PROTOTYPE LEFTOVERS
+# =============================================================================
+# Duplicate of docling.ipynb, kept locally, not worth publishing.
+notebooks/Prototype/*Copy*.ipynb

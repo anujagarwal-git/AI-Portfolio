@@ -19,5 +19,25 @@ env/
 # Environment variables
 .env
 
-# Large datasets (exceed GitHub 100MB limit)
-Deep-Learning/creditcard.csv
+# Large datasets (exceed GitHub's 100 MB per-file limit)
+#
+# The old rule `Deep-Learning/creditcard.csv` never matched, because the file
+# is at Deep-Learning/Project1/creditcard.csv. Five datasets totalling ~3.8 GB
+# were staged as a result, which is why `git push` failed:
+#
+#   1.70 GB  Deep-Learning/rejected_2007_to_2018Q4.csv
+#   1.60 GB  Deep-Learning/accepted_2007_to_2018Q4.csv
+#    336 MB  Deep-Learning/lendingclubfull.parquet
+#    144 MB  Deep-Learning/Project1/creditcard.csv
+#     68 MB  Deep-Learning/lendingclub.parquet
+#
+# Matching by extension anywhere under Deep-Learning, so a file moving between
+# folders cannot slip through the way creditcard.csv did.
+Deep-Learning/**/*.csv
+Deep-Learning/**/*.parquet
+
+# Traditional-ML/bank-full.csv is 4.4 MB and stays tracked — small enough to
+# keep the project reproducible.
+
+# RAG mentor memory file (local only)
+MENTOR_PROGRESS.md

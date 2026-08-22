@@ -1,0 +1,1088 @@
+# =============================================================================
+# DOCUMENT REGISTRY — RAG Regulatory Assistant
+# =============================================================================
+# One entry per source file. These fields are DENORMALISED onto every chunk's
+# Qdrant payload, because filtering happens at the chunk level.
+#
+# NOTHING HERE CAN BE INFERRED BY A PARSER. Every field below is a curated
+# regulatory fact. A wrong `status` or `effective_from` silently poisons every
+# downstream answer while the system keeps sounding confident. Treat this file
+# as the highest-risk artefact in the project.
+#
+# RULE: `verified: false` rows are REFUSED BY THE INDEXER (see regrag/
+# registry.py). Verification is a gate, not a good intention.
+#
+# PRINCIPLE: every corpus change must be a DATA change, never a CODE change.
+# Adding a jurisdiction or framework adds filter VALUES here, never new code.
+# =============================================================================
+schema_version: 4
+
+# --- CONTROLLED VOCABULARIES --------------------------------------------------
+# subject          : MODEL_RISK_MANAGEMENT | CAPITAL_ADEQUACY | CREDIT_IMPAIRMENT
+#                    | DATA_QUALITY | STRESS_TESTING
+# framework        : US_MRM_GUIDANCE | UK_MRM_SS | BASEL_FRAMEWORK | IFRS_9
+#                    | BCBS_239 | BCBS_STRESS_PRINCIPLES | BCBS_PROBLEM_ASSETS
+#                    | REG_Y | REG_YY | US_CAPITAL_PLANNING_GUIDANCE | DFAST
+# jurisdiction     : US | UK | EU | IN | GLOBAL
+# issuer           : FED | OCC | FDIC | US_INTERAGENCY | PRA | BCBS | EBA
+#                    | ECB | IASB | FASB | RBI
+# doc_type         : rule | supervisory_guidance | supervisory_statement
+#                    | standard | guideline | consultation | draft | faq
+#                    | reference_data
+# doc_role         : consolidated | amending | standalone
+# status           : in_force | partially_revised | superseded | draft
+#                    | consultation | withdrawn
+# applicability    : ALL | GSIB | US_CATEGORY_I | US_CATEGORY_II_III
+#                    | US_CATEGORY_I_TO_IV | UK_INTERNAL_MODEL_FIRMS | null
+#
+# -----------------------------------------------------------------------------
+# `standard` vs `guideline` — NEW IN v4, AND LOAD-BEARING.
+#
+# BCBS publishes standards and guidelines as SEPARATE publication sets. The
+# consolidated Basel Framework contains standards + FAQs only; guidelines and
+# sound-practice papers live outside it. The distinction is visible on the
+# cover page and in the verbs:
+#   standard  (CAP/CRE/LEX/RBC/SCO/SRP32) -> "banks must"
+#   guideline (d403 PAP, d450)            -> "banks should", "These guidelines"
+#
+# `requirement_lookup` MUST filter to doc_type IN (standard, rule).
+# A guideline retrieved as a requirement turns "should" into "must" — the
+# answer is fluent, cited, and wrong about the one thing that matters.
+#
+# -----------------------------------------------------------------------------
+# `applicability` — ONLY LEGALLY OPERATIVE THRESHOLDS, NEVER EDITORIAL ONES.
+#
+# v4 removed US_OVER_30BN and US_OVER_1BN. Both came from soft language —
+# the Fed calling SR 26-2 "most relevant to" firms over $30bn, and the FDIC
+# saying SR 11-7 is "not expected to pertain" below $1bn "unless model use is
+# significant, complex, or poses elevated risk". Neither is a scope boundary.
+# Encoding them as filter values meant a query about a $20bn firm would
+# EXCLUDE the current US model risk guidance outright — a silent wrong answer
+# produced by metadata, not by retrieval.
+# Both rows now carry `applicability: null`, meaning always eligible.
+# A value belongs here only if a document's own text or rule limits its scope.
+#
+# -----------------------------------------------------------------------------
+# `subject` AND `framework` ARE ORTHOGONAL, NOT PARENT-CHILD.
+#
+#   subject   = WHAT the document is about.
+#   framework = WHICH INSTRUMENT it is — the identity that PERSISTS ACROSS
+#               VERSIONS.
+#
+# The relationship is many-to-many and a tree cannot hold it:
+#   BASEL_FRAMEWORK spans CAPITAL_ADEQUACY *and* STRESS_TESTING (SRP32).
+#   STRESS_TESTING spans BCBS *and* the Federal Reserve.
+# Whichever you made the parent, the other became unaskable. So neither is.
+#
+# THE RULE FOR `framework`: two documents share a framework key if and only if
+# one could REPLACE the other, or they are variants of the same instrument.
+# SR 11-7 and SR 26-2 are two versions of ONE framework, so they share
+# US_MRM_GUIDANCE. Before v3 they had different keys, which meant axis 3 had
+# NO FIELD TO FILTER ON — "give me the current US MRM guidance" required
+# already knowing the answer. Now it is one facet:
+#     (framework=US_MRM_GUIDANCE, status=in_force)   -> SR 26-2
+#     (framework=US_MRM_GUIDANCE, status=superseded) -> SR 11-7
+#
+# AXIS -> FIELD MAP (each axis filters on exactly one field):
+#   Axis 1 Framework    -> `subject`                 FAN-OUT (subjects overlap)
+#   Axis 2 Jurisdiction -> `jurisdiction`            FILTER  (exclusive)
+#   Axis 3 Version      -> `framework` + `status`    FILTER  (exclusive)
+#
+# -----------------------------------------------------------------------------
+# `volume` — SUBDIVISION-ONLY RULE (v4).
+# Populate ONLY when the document is a subdivision of something larger; null
+# when the document IS the framework. So CAP/CRE/LEX/RBC/SCO/SRP32 carry their
+# chapter code and 225.8 carries its section number, but Part 252 does not —
+# framework REG_YY *is* Part 252, and two fields stating one fact is a bug
+# waiting for someone to edit one of them.
+# This makes "is `volume` present?" a signal the planner can read.
+#
+# `short_name` — the canonical citation string, on every row.
+# Six rows cannot be named from any other structured field, because their
+# `framework` is a shared version-family key (US_MRM_GUIDANCE,
+# US_CAPITAL_PLANNING_GUIDANCE, DFAST) and their `volume` is null. Without a
+# curated name, the generator must prettify a doc_id slug or invent a title —
+# and an invented title attached to a CORRECT quotation is unfalsifiable from
+# the output. Populated on all rows for consistency, not only where required.
+#
+# -----------------------------------------------------------------------------
+# authority_rank (0-5) — how much weight a clause carries in a conflict.
+#   5 = binding law/rule in its jurisdiction  (e.g. 12 CFR, EU CRR)
+#   4 = binding supervisory requirement
+#   3 = supervisory guidance / expectations   (SR letters, PRA SS)
+#   2 = international standard or guideline, NOT binding until a jurisdiction
+#       adopts it
+#   1 = draft / consultation — NEVER binding
+#   0 = reference data — factual output, states no requirement at all.
+#       NEVER retrievable for a requirement question.
+#
+# `doc_role` decides whether ONE document can settle a question.
+#   consolidated — self-contained current text; a single hit can answer.
+#   amending     — edits another document; meaningless alone. Extraction
+#                  destroys strikethrough, so deleted+added text merges into
+#                  nonsense ("both all"). SEMANTIC INVERSION, not noise.
+#   standalone   — self-contained, never amended.
+#
+# `revises` / `revised_by` are SEPARATE from `supersedes` / `superseded_by`.
+#   Partial revision leaves the old text standing in the untouched parts.
+#   Supersession replaces it wholesale. Collapsing the two is how a system
+#   ends up citing dead text as current.
+# -----------------------------------------------------------------------------
+#
+# STILL OPEN — raised, not yet closed (do not treat silence as settled):
+#   1. `DFAST` collision — scenarios and results share framework, status,
+#      subject and applicability with nothing structural separating them.
+#      ACCEPTED: both are authority_rank 0 and already excluded from every
+#      requirement question.
+#   2. IFRS 9 is indexed as a deliberate credit-risk extract with NO declared
+#      scope (decision: no `covers` field). The system therefore cannot
+#      distinguish "IFRS 9 is silent on X" from "our copy omits X".
+#      ACCEPTED AND UNDOCUMENTED IN DATA — see that row's notes.
+#   3. CODE TASK — `generation/prompts.py` must build citations from
+#      `short_name` + `volume` + `status` + `effective_from`. There is no
+#      free-text citation field; if prompts.py passes doc_id through, the
+#      audit trail degrades to slugs.
+#   4. CODE TASK — the Basel chapter-stamp parser does not exist yet, and the
+#      five multi-chapter Basel files CANNOT BE INDEXED until it does, because
+#      their `effective_from` is chapter-level. LEX (22pp, 4 chapters) is the
+#      smallest test target.
+#   5. Living-text staleness is a MANUAL discipline (no `snapshot_date` field).
+#      Rendering dates survive only in notes: 225.8 = 06 Aug 2026,
+#      Part 252 = 07 Aug 2026, Basel CAP/CRE/LEX/RBC = 04 Aug 2026,
+#      SCO/SRP32 = 10-11 Aug 2026.
+# =============================================================================
+
+# =============================================================================
+# KNOWN GAPS — instruments the corpus REFERENCES but does not HOLD.
+#
+# Not documents. Zero vectors, zero embedding cost. Their only job is to let a
+# refusal be specific: "that provision lives in an instrument we don't hold"
+# instead of a bare "I don't know". A refusal that names the gap is auditable;
+# one that doesn't is indistinguishable from a retrieval failure.
+# =============================================================================
+known_gaps:
+
+  - instrument: 12 CFR 217
+    short_name: 12 CFR 217
+    title: Regulatory Capital Rules (Regulation Q)
+    jurisdiction: US
+    issuer: FED
+    referenced_by: [cfr-12-252, cfr-12-225-8]
+    sections_referenced: ["217.2", "217.3", "217.10", "217.11", "217.20",
+                          "217.36", "217.37", "217.132", "217.400", "217.402",
+                          "217.403", "217.406"]
+    sections_basis: >
+      Extracted from the corpus itself — every "12 CFR 217.x" cross-reference
+      appearing in 12 CFR Part 252 and 12 CFR 225.8. Most frequent: 217.2
+      (28 references), 217.402 (9), 217.11 (9 across both documents).
+    reason_absent: >
+      Deliberately not acquired (2026-08-12). ~250 pages against a current
+      corpus of ~1,100, and the CCAR chain can be demonstrated without it.
+    consequence: >
+      THE CET1 CHAIN IS BROKEN AT THE LAST LINK. Part 252 defines CET1 only by
+      cross-reference: "Common equity tier 1 capital has the same meaning as in
+      12 CFR 217.20(b)". So no capital REQUIREMENT and no distribution limit
+      can be answered from this corpus. Two documents will look like they
+      answer it and neither does: Basel RBC states "Common Equity Tier 1 must
+      be at least 4.5% of RWA" (authority_rank 2 — binds nobody in the US), and
+      the 2026 DFAST results table contains the numeral 4.5 (authority_rank 0 —
+      an outcome, not a requirement). A pipeline ignoring authority_rank gets
+      false corroboration from both at once.
+    refusal: >
+      The provision you are asking about is set out in 12 CFR 217 (Regulation
+      Q), which is cross-referenced by 12 CFR Part 252 and 12 CFR 225.8 but is
+      not held in this corpus. It cannot be answered from these sources. Note
+      that the Basel minimum (RBC) is not a US requirement, and stress test
+      results are outcomes rather than requirements.
+
+# =============================================================================
+# AXIS 1 — FRAMEWORK : model risk vs Basel capital        -> `subject`
+# AXIS 2 — JURISDICTION : SR 26-2 (US) vs SS1/23 (UK)     -> `jurisdiction`
+# AXIS 3 — VERSION : SR 11-7 -> SR 26-2                   -> `framework`+`status`
+#
+# CONCENTRATION RISK: axes 2 and 3 both live inside MODEL_RISK_MANAGEMENT, on
+# three documents. Worse, the corpus holds exactly ONE UK document — axis 2
+# rests on a single file. If SS1/23 fails to parse, axis 2 produces nothing.
+# A free second eCFR as-of-date snapshot of Part 252 would have given axis 3 a
+# second pair; DECLINED 2026-08-12, so the fragility is accepted knowingly.
+# =============================================================================
+
+documents:
+
+# -----------------------------------------------------------------------------
+# MODEL RISK MANAGEMENT — carries axis 2 (US vs UK) and axis 3 (version)
+# -----------------------------------------------------------------------------
+
+  - doc_id: sr-26-2-2026
+    short_name: SR 26-2
+    file: data/MRM/SR-26-2_attachment.pdf
+    subject: MODEL_RISK_MANAGEMENT
+    framework: US_MRM_GUIDANCE      # SHARED with sr-11-7-2011 — this is axis 3
+    volume: null
+    jurisdiction: US
+    issuer: US_INTERAGENCY          # PDF header: Board of Governors + FDIC + OCC
+    doc_type: supervisory_guidance
+    doc_role: consolidated
+    effective_from: 2026-04-17      # dated on the attachment's own first page
+    effective_to: null
+    status: in_force
+    supersedes: [sr-11-7-2011]      # ALSO supersedes SR 21-8 (BSA/AML), not in corpus
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: null             # v4: "most relevant to $30bn+" is editorial, not scope
+    authority_rank: 3
+    source_url: https://www.federalreserve.gov/supervisionreg/srletters/SR2602.htm
+    notes: >
+      Revised interagency guidance on model risk management. Issued 17 Apr 2026
+      by the Federal Reserve, OCC and FDIC jointly; all three agencies appear in
+      the attachment header, so US_INTERAGENCY is correct here in a way it is
+      NOT for SR 11-7 (see that row).
+      Supersedes BOTH SR 11-7 (2011) and SR 21-8 (2021, BSA/AML model risk) —
+      which is why `supersedes` is a LIST. Only SR 11-7 is in this corpus, so
+      only it appears above; do not "tidy" this to a scalar.
+
+      MODEL DEFINITION — VERIFIED VERBATIM FROM THIS PDF (2026-08-12):
+        "For the purposes of this guidance, the term 'model' refers to a COMPLEX
+         quantitative method, system, or approach that applies statistical,
+         economic, or financial theories to process input data into quantitative
+         estimates. The term 'model' in this guidance EXCLUDES simple arithmetic
+         calculations, such as those found within spreadsheets, as well as
+         deterministic rule-based processes and software where there are no
+         statistical, economic, or financial theories underpinning their design
+         or use."
+      Prior secondary-commentary caveat REMOVED — the claim checked out, and
+      two further changes it had missed are recorded on the sr-11-7 row.
+    verified: true
+
+  - doc_id: sr-11-7-2011
+    short_name: SR 11-7
+    file: data/MRM/SR-11-7_ModelRiskMgmt_2011.pdf
+    subject: MODEL_RISK_MANAGEMENT
+    framework: US_MRM_GUIDANCE      # SHARED with sr-26-2-2026 — this is axis 3
+    volume: null
+    jurisdiction: US
+    issuer: US_INTERAGENCY          # IMPRECISE BY DECISION — see notes
+    doc_type: supervisory_guidance
+    doc_role: consolidated
+    effective_from: 2011-04-04
+    effective_to: 2026-04-17
+    status: superseded
+    supersedes: []
+    superseded_by: [sr-26-2-2026]
+    revises: []
+    revised_by: []
+    applicability: null             # v4: FDIC's "$1bn unless significant" is conditional, not scope
+    authority_rank: 3
+    source_url: https://www.federalreserve.gov/supervisionreg/srletters/sr1107.htm
+    notes: >
+      Original 2011 guidance on model risk management.
+      MUST NEVER appear in a default (in_force) answer. Indexed only so that
+      "what changed?" questions work and the audit trail can show prior text.
+
+      MODEL DEFINITION — VERIFIED VERBATIM FROM THIS PDF (2026-08-12):
+        "For the purposes of this document, the term model refers to a
+         quantitative method, system, or approach that applies statistical,
+         economic, financial, or MATHEMATICAL theories, TECHNIQUES, AND
+         ASSUMPTIONS to process input data into quantitative estimates."
+
+      WHAT CHANGED IN SR 26-2 — four differences, all verified from both PDFs:
+        1. "complex" qualifier ADDED
+        2. explicit EXCLUSION of simple arithmetic and deterministic
+           rule-based processes ADDED
+        3. "mathematical" theories DROPPED from the list
+        4. "techniques, and assumptions" DROPPED
+      Items 3 and 4 were NOT in the secondary commentary and were found only by
+      reading both texts.
+
+      *** THE SPREADSHEET REVERSAL — BEST GOLDEN QUESTION IN THE CORPUS ***
+      This document says: "User-developed applications, such as SPREADSHEETS or
+      ad hoc database applications used to generate quantitative estimates, are
+      PARTICULARLY PRONE TO MODEL RISK."
+      SR 26-2 excludes "simple arithmetic calculations, such as those found
+      within spreadsheets."
+      Be precise: this is not a blanket reversal — a spreadsheet running a
+      regression is still a model under SR 26-2. But on SIMPLE spreadsheet
+      calculations the two versions point in opposite directions.
+      "Are spreadsheets in scope for model risk management?" therefore has a
+      DIFFERENT CORRECT ANSWER PER VERSION, both quotable. A version-bleed
+      failure produces a confident, well-cited, inverted answer — a stronger
+      trap than golden question sr-01, because the failure is a reversal rather
+      than a drift.
+
+      ISSUER IS IMPRECISE AND DELIBERATELY SO (decision 2026-08-12). The 2011
+      attachment header lists only the Federal Reserve and the OCC — not the
+      FDIC. The FDIC adopted the same guidance with technical conforming
+      changes on 07 Jun 2017 via FIL-22-2017. So "US_INTERAGENCY" is true of
+      the guidance TODAY and false of this document AT ISSUANCE. A FED_OCC
+      vocabulary value was considered and declined; the nuance lives here and
+      cannot be filtered on.
+    verified: true
+
+  - doc_id: pra-ss1-23-2023
+    short_name: SS1/23
+    file: data/MRM/PRA_SS1-23_MRM_Principles_2023.pdf
+    subject: MODEL_RISK_MANAGEMENT
+    framework: UK_MRM_SS
+    volume: null
+    jurisdiction: UK                # THE ONLY UK DOCUMENT IN THE CORPUS
+    issuer: PRA
+    doc_type: supervisory_statement
+    doc_role: consolidated
+    effective_from: 2024-05-17      # PUBLISHED 17 May 2023, EFFECTIVE 17 May 2024
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: UK_INTERNAL_MODEL_FIRMS
+    authority_rank: 3
+    source_url: https://www.bankofengland.co.uk/prudential-regulation/publication/2023/may/model-risk-management-principles-for-banks-ss
+    notes: >
+      Model risk management principles for banks. 30 pages.
+      SINGLE POINT OF FAILURE FOR AXIS 2 — the only non-US, non-GLOBAL document
+      in the corpus. If it parses badly the entire US-vs-UK comparison story has
+      no evidence behind it. Parse and inspect it early.
+      Published 17 May 2023 as part of PS6/23; the five principles came into
+      effect 17 May 2024. PUBLICATION != EFFECTIVE, a one-year gap, and using
+      the wrong one silently mis-answers any "was this in force when..."
+      question. effective_from holds the operative date.
+      Applies to UK-incorporated banks, building societies and PRA-designated
+      investment firms WITH internal model approval for regulatory capital.
+      This is a REAL scope limit from the statement itself, which is why
+      applicability is populated here and null on the two SR rows.
+      Narrower than SR 26-2's population, so a US-vs-UK comparison is never
+      strictly like-for-like — worth saying out loud in the answer.
+      NOT a UK implementation of SR 11-7: independently drafted, different
+      vocabulary. Aligns to SR 26-2 concept-to-concept, never clause-to-clause.
+      Hence a concept crosswalk rather than a clause map.
+    verified: true
+
+# =============================================================================
+# BASEL FRAMEWORK — consolidated chapters (BIS)
+#
+# (a) d424 IS NOT A DOCUMENT HERE — IT IS ALREADY INSIDE THESE FILES.
+#     RBC20's own headnote: "Changes to output floor and approaches available
+#     to calculate credit and operational risk capital requirements, as set out
+#     in the December 2017 Basel III publication". CRE20 says the same. The
+#     consolidated chapter IS the post-d424 text. So there is no
+#     `revises`/`revised_by` link anywhere in Basel, and no d424 row. The v1
+#     registry's `revised_by: [bcbs-d424-2017]` pointed BACKWARDS in time.
+#
+# (b) `effective_from` IS NOT A DOCUMENT-LEVEL FACT for the five multi-chapter
+#     files. Every chapter carries its own "Version effective as of" stamp.
+#     SCO is the sharpest case: SCO10 is effective 15 Dec 2019 while the
+#     cryptoasset chapter is effective 01 Jan 2026. A single date on the row
+#     would be false for most of the file.
+#     DECISION: effective_from stays null at document level; the parser reads
+#     each chapter's headnote stamp onto the CHUNK. Basel cannot be indexed
+#     until that parser exists — deliberately.
+#     Observed stamps, for the parser test fixture:
+#       CAP  5 chapters : 15 Dec 2019 (x4), 03 Apr 2020 (x1)
+#       CRE 27 chapters : 01 Jan 2023 (x22), 15 Dec 2019 (x5)
+#       LEX  4 chapters : 15 Dec 2019 (x2), 01 Jan 2023 (x2)
+#       RBC  5 chapters : 01 Jan 2023 (x3), 15 Dec 2019 (x2)
+#       SCO  6 chapters : 15 Dec 2019 (x3), 01 Jan 2023, 09 Nov 2021, 01 Jan 2026
+#     SRP32 is SINGLE-CHAPTER, so its date IS document-level.
+#
+# (c) BCBS TEXT BINDS NOWHERE until a jurisdiction implements it, and those
+#     timelines diverged and were repeatedly deferred. Carried by rank 2.
+#
+# (d) THESE ARE LIVING TEXTS, generated on demand from the BIS website. No
+#     `snapshot_date` field exists, so rendering dates are recorded per row in
+#     prose only and cannot be queried.
+#
+# ALSO: "Basel IV" is an INDUSTRY NICKNAME. BCBS never uses it.
+# =============================================================================
+
+  - doc_id: bcbs-cap-consolidated
+    short_name: Basel CAP
+    file: data/CreditRisk/BASEL_CAP.pdf
+    subject: CAPITAL_ADEQUACY
+    framework: BASEL_FRAMEWORK
+    volume: CAP
+    jurisdiction: GLOBAL
+    issuer: BCBS
+    doc_type: standard
+    doc_role: consolidated
+    effective_from: null            # CHAPTER-LEVEL — see (b) above
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: ALL
+    authority_rank: 2
+    source_url: https://www.bis.org/basel_framework/standard/CAP.htm
+    notes: >
+      Definition of capital. Criteria bank capital instruments must meet,
+      regulatory adjustments, prudent valuation guidance, transitional
+      arrangements. 62 pages, 5 chapters.
+      Chapter stamps: 15 Dec 2019 (x4), 03 Apr 2020 (x1).
+      LIVING TEXT — generated from the BIS site 04 Aug 2026.
+    verified: true
+
+  - doc_id: bcbs-cre-consolidated
+    short_name: Basel CRE
+    file: data/CreditRisk/BASEL_CRE.pdf
+    subject: CAPITAL_ADEQUACY
+    framework: BASEL_FRAMEWORK
+    volume: CRE
+    jurisdiction: GLOBAL
+    issuer: BCBS
+    doc_type: standard
+    doc_role: consolidated
+    effective_from: null            # CHAPTER-LEVEL — see (b) above
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: ALL
+    authority_rank: 2
+    source_url: https://www.bis.org/basel_framework/standard/CRE.htm
+    notes: >
+      Calculation of RWA for credit risk.
+      LARGEST DOCUMENT IN THE CORPUS at 323 pages and 27 chapters — it alone
+      will dominate chunk counts and CPU embedding time. Plan for it.
+      Covers SA and IRB for credit risk, credit risk mitigation, securitisation
+      (incl. NPL securitisations, CRE45), counterparty credit risk, equity
+      investments in funds. Closest chapter to Anuj's own PD/LGD/EAD domain and
+      the natural source of hard golden questions.
+
+      AXIS 1 OVERLAP ZONE — WHY `subject` IS A FAN-OUT AXIS, NOT A FILTER.
+      CRE36 section 8 is titled "Validation of internal estimates" (36.122:
+      "Banks must have a robust system in place to validate the accuracy and
+      consistency of..."). So model validation appears on BOTH sides of axis 1:
+      as a risk-management discipline in SR 26-2 / SS1/23, and as a CAPITAL
+      ELIGIBILITY CONDITION here — the IRB minimum requirements govern whether
+      a bank may use IRB at all. Same words, different consequence.
+      Scoping a validation query to MODEL_RISK_MANAGEMENT silently DELETES the
+      CRE36 half of the answer. The user sees a fluent, well-cited, complete-
+      looking response with no signal that half the requirement is missing.
+
+      DENSITY WARNING: SR 11-7 has ~101 "validat*" hits in 21 pages; CRE has
+      ~39 in 323. Per page, MRM text is roughly 25x denser in the vocabulary of
+      a validation query, so CRE loses on raw similarity even when relevant —
+      the axis collapses on its own with no filter involved. Per-facet quota is
+      what forces CRE36 into context. Note that quota LOWERS context_precision
+      and RAISES context_recall; a precision-only gate cannot see one-sided
+      retrieval at all, because precision is computed only over what WAS
+      retrieved and is structurally blind to absence.
+
+      CRE20's headnote is direct evidence that d424 is already absorbed.
+      27 chapters. Stamps: 01 Jan 2023 (x22), 15 Dec 2019 (x5).
+      LIVING TEXT — generated from the BIS site 04 Aug 2026.
+    verified: true
+
+  - doc_id: bcbs-lex-consolidated
+    short_name: Basel LEX
+    file: data/CreditRisk/BASEL_LEX.pdf
+    subject: CAPITAL_ADEQUACY
+    framework: BASEL_FRAMEWORK
+    volume: LEX
+    jurisdiction: GLOBAL
+    issuer: BCBS
+    doc_type: standard
+    doc_role: consolidated
+    effective_from: null            # CHAPTER-LEVEL — see (b) above
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: ALL
+    authority_rank: 2
+    source_url: https://www.bis.org/basel_framework/standard/LEX.htm
+    notes: >
+      Large exposures. Limits on exposure to a single counterparty or group of
+      connected counterparties. 22 pages, 4 chapters.
+      Stamps: 15 Dec 2019 (x2), 01 Jan 2023 (x2).
+      SMALLEST BASEL FILE — the right first target for the chapter-stamp parser
+      before attempting CRE.
+      LIVING TEXT — generated from the BIS site 04 Aug 2026.
+    verified: true
+
+  - doc_id: bcbs-rbc-consolidated
+    short_name: Basel RBC
+    file: data/CreditRisk/BASEL_RBC.pdf
+    subject: CAPITAL_ADEQUACY
+    framework: BASEL_FRAMEWORK
+    volume: RBC
+    jurisdiction: GLOBAL
+    issuer: BCBS
+    doc_type: standard
+    doc_role: consolidated
+    effective_from: null            # CHAPTER-LEVEL — see (b) above
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: ALL
+    authority_rank: 2
+    source_url: https://www.bis.org/basel_framework/standard/RBC.htm
+    notes: >
+      Risk-based capital requirements. Minimum risk-based capital calculation,
+      banking/trading book boundary, buffers above the regulatory minimum,
+      G-SIB buffers, transitional arrangements. 40 pages, 5 chapters.
+
+      CONTAINS THE SINGLE MOST DANGEROUS SENTENCE IN THE CORPUS:
+        "Common Equity Tier 1 must be at least 4.5% of risk-weighted assets."
+      It reads like a direct answer to "what is the minimum CET1 requirement
+      for a US bank" and is NOT one, because BCBS binds nobody. authority_rank
+      2 is the only thing standing between that sentence and a confident wrong
+      answer. Compounding it, the 2026 DFAST results table also contains the
+      numeral 4.5 (authority_rank 0), so a naive pipeline gets FALSE
+      CORROBORATION from two sources at once. See known_gaps: 12 CFR 217.
+
+      RBC20's headnote names the December 2017 publication explicitly — the
+      evidence that d424 needs no separate row.
+      Stamps: 01 Jan 2023 (x3), 15 Dec 2019 (x2).
+      LIVING TEXT — generated from the BIS site 04 Aug 2026.
+    verified: true
+
+  - doc_id: bcbs-sco-consolidated
+    short_name: Basel SCO
+    file: data/CreditRisk/BASEL_SCO.pdf
+    subject: CAPITAL_ADEQUACY
+    framework: BASEL_FRAMEWORK
+    volume: SCO
+    jurisdiction: GLOBAL
+    issuer: BCBS
+    doc_type: standard
+    doc_role: consolidated
+    effective_from: null            # CHAPTER-LEVEL — see (b) above
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: ALL
+    authority_rank: 2
+    source_url: https://www.bis.org/basel_framework/standard/SCO.htm
+    notes: >
+      Scope and definitions. Scope of application, G-SIB and D-SIB designation,
+      cryptoasset exposures, glossary. Cross-referenced by CAP, CRE and RBC —
+      the definitions chapter. 63 pages, 6 chapters.
+      WIDEST VERSION SPREAD IN THE CORPUS: chapters span 15 Dec 2019 to
+      01 Jan 2026 (cryptoassets). This single file is the strongest argument
+      that a document-level effective_from would have been a lie.
+      LIVING TEXT — generated 10 Aug 2026, SIX DAYS LATER than CAP/CRE/LEX/RBC.
+      Two files from one living source with different rendering ages is exactly
+      the staleness case a snapshot field would expose; with no such field,
+      this comment is the only record.
+    verified: true
+
+  - doc_id: bcbs-srp32-consolidated
+    short_name: Basel SRP32
+    file: data/StressTesting/SRP32.pdf
+    subject: STRESS_TESTING         # see notes — SRP is Pillar 2, filed on content
+    framework: BASEL_FRAMEWORK
+    volume: SRP32
+    jurisdiction: GLOBAL
+    issuer: BCBS
+    doc_type: standard
+    doc_role: consolidated
+    effective_from: 2023-01-01      # SINGLE chapter, so ONE stamp is legitimate
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: ALL
+    authority_rank: 2
+    source_url: https://www.bis.org/basel_framework/chapter/SRP/32.htm
+    notes: >
+      Credit risk, in the supervisory review process (Pillar 2). 12 pages,
+      59 numbered paragraphs, single chapter.
+      REPLACED SRP30 IN THE CORPUS (2026-08-12). SRP30 was "Risk management" —
+      general Pillar 2 risk management, filed under stress testing by mistake,
+      and it has been deleted from disk. SRP32 is the credit risk chapter and
+      genuinely carries stress testing content, verified from the PDF:
+        - section heading "Stress tests under the internal ratings-based
+          approaches"
+        - 32.11 "A bank's management should conduct periodic stress tests of its
+          major credit risk..."
+        - 32.21 "The bank must have a routine and rigorous program of stress
+          testing in place..."
+      Closes open decision #4, carried across three sessions.
+
+      STRUCTURAL BONUS: cross-references CRE36.53, which ties this chapter
+      directly to the CRE36 IRB overlap zone. SRP32 is a bridge between the
+      Pillar 2 supervisory review of credit risk and the Pillar 1 IRB
+      requirements — and it is squarely Anuj's own domain.
+
+      `subject: STRESS_TESTING` is a content-based call, not a literal one:
+      this is an SRP (supervisory review) chapter. The SUPERVISORY_REVIEW
+      subject value was dropped in v4 once SRP30 left, so SRP32's Pillar 2
+      character is no longer expressible as a filter. Accepted knowingly.
+      Note this makes BASEL_FRAMEWORK span CAPITAL_ADEQUACY and STRESS_TESTING
+      — fine, because subject and framework are orthogonal.
+      LIVING TEXT — generated 11 Aug 2026.
+    verified: true
+
+# =============================================================================
+# CREDIT IMPAIRMENT — accounting vs prudential definitions of a bad asset
+#
+# IFRS 9 and PAP are the corpus's FOURTH comparison, and the one closest to
+# Anuj's provisioning background: the SAME underlying asset, two regimes, two
+# tests. IFRS 9 asks whether an asset is "credit-impaired" for measurement;
+# PAP asks whether an exposure is "non-performing" for supervisory reporting.
+# Neither answer determines the other.
+# =============================================================================
+
+  - doc_id: ifrs9-extract
+    short_name: IFRS 9 (credit risk extract)
+    file: data/CreditRisk/IFRS9.pdf
+    subject: CREDIT_IMPAIRMENT
+    framework: IFRS_9
+    volume: null
+    jurisdiction: GLOBAL
+    issuer: IASB
+    doc_type: standard
+    doc_role: standalone            # PROVISIONAL — edition unknown, see notes
+    effective_from: null            # UNKNOWN: extract carries no edition stamp
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: ALL
+    authority_rank: 2
+    source_url: null
+    notes: >
+      IFRS 9 Financial Instruments — DELIBERATE CREDIT-RISK EXTRACT, not the
+      full standard. Indexed as-is by decision (2026-08-12).
+
+      WHAT IT CONTAINS: 42 pages cut from a 133-page source span (A368-A500).
+      Retained: Chapter 1 Objective, Chapter 2 Scope, Chapter 3 Recognition and
+      derecognition, paragraphs 5.4 / 5.5 / 5.6 (amortised cost, IMPAIRMENT and
+      ECL, reclassification), Chapter 7 Effective date and transition.
+      Removed, by intent: Chapter 4 (Classification), 5.1-5.3 (initial and
+      subsequent measurement), Chapter 6 (Hedge accounting — the bulk of the
+      54-page gap). Gaps: A372->A388 (15pp), A391->A414 (22pp), A431->A486 (54pp).
+      NOTE: every page is headed "IFRS 9". The IFRS 15 and IFRS 17 references
+      inside it are CROSS-REFERENCES in the scope chapter, not other standards'
+      content — nothing from another standard was removed.
+
+      ACCEPTED LIMITATION (no `covers` field, by decision): the file records
+      nothing about what was removed, so the system CANNOT DISTINGUISH
+      "IFRS 9 is silent on X" from "our copy omits X". Deliberate curation and
+      accidental truncation produce identical retrieval behaviour — knowing why
+      the pages are missing does not help the retriever.
+      CONCRETE CONSEQUENCE: Chapter 4 determines WHICH financial assets the ECL
+      model applies to (amortised cost and FVOCI). "Which assets are in scope
+      for expected credit losses?" is a credit risk question this extract may
+      not be able to answer, and it will not know that it cannot.
+
+      ALSO UNKNOWN: which annual bound-volume edition this is, hence which
+      amendments it already incorporates. doc_role: standalone is a guess;
+      IFRS 9 has its own amendment history and may warrant `consolidated`.
+      data/Others/ifrs-9-...-ILLUSTRATIVE-EXAMPLES-2023.pdf is on disk and may
+      resolve the edition question.
+    verified: true
+
+  - doc_id: bcbs-pap-d403
+    short_name: BCBS d403 (PAP)
+    file: data/CreditRisk/BASEL_PAP.pdf
+    subject: CREDIT_IMPAIRMENT
+    framework: BCBS_PROBLEM_ASSETS
+    volume: null                    # standalone publication, not a framework chapter
+    jurisdiction: GLOBAL
+    issuer: BCBS
+    doc_type: guideline             # cover reads "Guidelines" — see notes
+    doc_role: standalone
+    effective_from: 2017-04-04      # BIS press release p170404
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: ALL
+    authority_rank: 2
+    source_url: https://www.bis.org/bcbs/publ/d403.htm
+    notes: >
+      Prudential treatment of problem assets — definitions of non-performing
+      exposures and forbearance. 45 pages. Added 2026-08-12, closing an item
+      carried across three sessions.
+      Harmonised definition of a non-performing exposure: exposures defaulted
+      under the Basel framework, credit-impaired under the applicable
+      accounting framework, or material and more than 90 days past due; plus
+      the definition of forbearance and criteria for exiting it.
+
+      A GUIDELINE, NOT A STANDARD — and this is why doc_type: guideline was
+      added in v4. Evidence from the file itself: the cover reads "Basel
+      Committee on Banking Supervision / GUIDELINES / Prudential treatment of
+      problem assets"; the text says "banks should" (6 occurrences) and "These
+      guidelines", never "banks must". It is NOT part of the consolidated Basel
+      Framework, which is standards + FAQs only — hence its own framework key
+      rather than BASEL_FRAMEWORK, and volume: null.
+      `requirement_lookup` must exclude it. Retrieved as a requirement, its
+      "should" becomes "must" and the answer is wrong about the only thing that
+      matters.
+
+      WHY IT EARNS ITS PLACE: pairs with ifrs9-extract to give the corpus its
+      accounting-vs-prudential comparison — "credit-impaired" under IFRS 9
+      against "non-performing" under PAP. Same asset, two regimes, two tests,
+      and PAP's own definition explicitly references the accounting one.
+      Directly on Anuj's NPA/provisioning ground.
+
+      DATE DISCREPANCY, RECORDED NOT RESOLVED: the copyright line reads
+      "© Bank for International Settlements 2016" while the PDF was created
+      03 Apr 2017 and the BIS press release is dated 04 Apr 2017. The 2016 line
+      is almost certainly carried over from the April 2016 consultative
+      version. effective_from uses the press-release date.
+
+      FILE PROVENANCE: an earlier download under this filename was the
+      CONSOLIDATED "PAP - Problem assets and provisions" framework chapter —
+      69 pages, ZERO embedded fonts, zero extractable text, 14MB of pure
+      graphics needing OCR. It was replaced with this text-bearing guideline.
+      Those are two DIFFERENT documents and the consolidated PAP standard
+      chapter still exists on the BIS site; if a requirement-grade answer on
+      problem assets is ever needed, that chapter — not this guideline — is the
+      authoritative source.
+      This copy verified clean: 109,391 chars over 45 pages (2,430/page),
+      embedded TrueType fonts present.
+    verified: true
+
+# =============================================================================
+# DATA QUALITY
+# =============================================================================
+
+  - doc_id: bcbs-239-2013
+    short_name: BCBS 239
+    file: data/DataGovernance/BCBS_239_RiskDataAggregation_2013.pdf
+    subject: DATA_QUALITY
+    framework: BCBS_239
+    volume: null
+    jurisdiction: GLOBAL
+    issuer: BCBS
+    doc_type: standard
+    doc_role: standalone
+    effective_from: 2016-01-01      # G-SIB COMPLIANCE date, not publication date
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: GSIB
+    authority_rank: 2
+    source_url: https://www.bis.org/publ/bcbs239.htm
+    notes: >
+      Principles for effective risk data aggregation and risk reporting.
+      Published January 2013 (stated on the cover). 28 pages. 14 principles
+      across governance/infrastructure, aggregation capability, reporting
+      practice, and supervisory review.
+      PUBLICATION 2013, COMPLIANCE 01 Jan 2016 for G-SIBs — effective_from
+      holds the compliance date, matching the SS1/23 treatment.
+      D-SIBs get three years from their own designation date, which is
+      FIRM-SPECIFIC and therefore not representable in this row; a D-SIB
+      question cannot be answered from metadata alone.
+      Fixed edition — re-fetching should return identical content.
+    verified: true
+
+# =============================================================================
+# STRESS TESTING — GLOBAL (BCBS)
+# =============================================================================
+
+  - doc_id: bcbs-d450-2018
+    short_name: BCBS d450
+    file: data/StressTesting/BASEL_d450.pdf
+    subject: STRESS_TESTING
+    framework: BCBS_STRESS_PRINCIPLES
+    volume: null
+    jurisdiction: GLOBAL
+    issuer: BCBS
+    doc_type: guideline             # principles publication, not a standard
+    doc_role: standalone
+    effective_from: 2018-10-17      # VERIFIED publication date, not a placeholder
+    effective_to: null
+    status: in_force
+    supersedes: []                  # 2009 predecessor NOT in corpus — see notes
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: ALL
+    authority_rank: 2
+    source_url: https://www.bis.org/bcbs/publ/d450.htm
+    notes: >
+      Stress testing principles. 15 pages, ISBN 978-92-9259-207-3.
+      DATE VERIFIED 2026-08-12: published 17 Oct 2018 (BIS press release
+      p181017). The earlier "2018-10-01" was a placeholder derived from the
+      cover's "October 2018"; the real day is now recorded.
+
+      SUPERSESSION VERIFIED 2026-08-12: this publication REPLACES the
+      "Principles for sound stress testing practices and supervision"
+      published May 2009. Previously carried as an unverified belief.
+      `supersedes` is left EMPTY because the 2009 document is not in this
+      corpus and a doc_id must resolve. *** TRIGGER: if the 2009 principles are
+      ever added, this link MUST be created, or the superseded 2009 text will
+      retrieve as current — the same failure SR 11-7 is guarded against. ***
+
+      A GUIDELINE, NOT A STANDARD (v4 reclassification). It sits on the
+      /bcbs/publ/ path, not in the consolidated framework, and its cover
+      carries no standards label. `requirement_lookup` must exclude it.
+    verified: true
+
+# =============================================================================
+# STRESS TESTING — US / CCAR
+#
+# The chain runs: capital plan rule (225.8) -> enhanced prudential standards
+# and stress test rules (252) -> supervisory expectations by firm category
+# (SR 15-18 / SR 15-19) -> annual scenarios -> annual results.
+# The last link is MISSING — see known_gaps: 12 CFR 217.
+#
+# `applicability` is load-bearing here: SR 15-18 and SR 15-19 are the SAME
+# guidance aimed at DIFFERENT firm categories, and they share one `framework`
+# key, so applicability is their ONLY discriminator.
+# =============================================================================
+
+  - doc_id: cfr-12-225-8
+    short_name: 12 CFR 225.8
+    file: "data/StressTesting/CCAR/12 CFR 225.8 (up to date as of 8-06-2026).pdf"
+    subject: STRESS_TESTING
+    framework: REG_Y
+    volume: "225.8"                 # a SECTION within Part 225 — subdivision, so populated
+    jurisdiction: US
+    issuer: FED
+    doc_type: rule
+    doc_role: consolidated
+    effective_from: null            # LIVING TEXT — no edition; see notes
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: US_CATEGORY_I_TO_IV
+    authority_rank: 5               # BINDING LAW — highest in this corpus
+    source_url: https://www.ecfr.gov/current/title-12/chapter-II/subchapter-A/part-225/subpart-A/section-225.8
+    notes: >
+      Capital planning and stress capital buffer requirement (Regulation Y).
+      12 pages.
+      THE ONLY BINDING INSTRUMENTS IN THIS CORPUS ARE THIS ROW AND 12 CFR 252
+      (authority_rank 5). Everything else is guidance or non-binding
+      international standard/guideline. Conflict-resolution logic must let
+      these two win.
+      LIVING TEXT: eCFR renders the regulation as it stands on a date; there is
+      no edition, so effective_from is null. RENDERING DATE 06 Aug 2026 —
+      stated in the filename and on page 1 ("up to date as of 8/06/2026"). With
+      no snapshot field it is not queryable. eCFR labels itself "authoritative
+      but unofficial".
+      A free second as-of-date snapshot of this section would have given axis 3
+      a second version pair; DECLINED 2026-08-12.
+    verified: true
+
+  - doc_id: cfr-12-252
+    short_name: 12 CFR Part 252
+    file: "data/StressTesting/CCAR/12 CFR Part 252 (up to date as of 8-07-2026).pdf"
+    subject: STRESS_TESTING
+    framework: REG_YY
+    volume: null                    # v4: Regulation YY IS Part 252 — was circular
+    jurisdiction: US
+    issuer: FED
+    doc_type: rule
+    doc_role: consolidated
+    effective_from: null            # LIVING TEXT — no edition; see notes
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: US_CATEGORY_I_TO_IV
+    authority_rank: 5
+    source_url: https://www.ecfr.gov/current/title-12/chapter-II/subchapter-A/part-252
+    notes: >
+      Enhanced Prudential Standards (Regulation YY). Company-run and
+      supervisory stress test requirements, categorisation of banking
+      organizations (252.5 — the tailoring framework SR 15-18 and SR 15-19
+      depend on), single-counterparty credit limits.
+      SECOND-LARGEST FILE at 194 pages. Rendering date 07 Aug 2026 — ONE DAY
+      NEWER than 225.8. A real rendering-drift example inside a single
+      regulatory chain, now recorded only in prose.
+      `volume` NULLED IN v4 under the subdivision-only rule: framework REG_YY
+      and volume "252" stated the same fact.
+      DEFINES CET1 ONLY BY CROSS-REFERENCE: "Common equity tier 1 capital has
+      the same meaning as in 12 CFR 217.20(b)" — and 217 is not held. This is
+      the live proof of the known_gaps entry above.
+      FRAMEWORK IN FLUX: October 2025 NPRs on stress test averaging and model
+      transparency closed for comment 21 Feb 2026; no final rule found as of
+      Aug 2026. A newer rendering may differ materially. Re-check before this
+      corpus is presented as current.
+    verified: true
+
+  - doc_id: sr-15-18-2015r2021
+    short_name: SR 15-18
+    file: data/StressTesting/CCAR/sr15-18.pdf
+    subject: STRESS_TESTING
+    framework: US_CAPITAL_PLANNING_GUIDANCE   # SHARED with sr-15-19
+    volume: null
+    jurisdiction: US
+    issuer: FED
+    doc_type: supervisory_guidance
+    doc_role: consolidated
+    effective_from: 2015-12-18
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: US_CATEGORY_I    # THE ONLY THING SEPARATING THIS FROM SR 15-19
+    authority_rank: 3
+    source_url: https://www.federalreserve.gov/supervisionreg/srletters/sr1518.htm
+    notes: >
+      Federal Reserve supervisory assessment of capital planning and positions,
+      Category I firms. 45 pages.
+      Issued 18 Dec 2015, REVISED 15 Jan 2021 to apply to US bank holding
+      companies subject to CATEGORY I standards under the tailoring framework
+      (84 FR 59032, 01 Nov 2019). Both dates are on the letter's first page.
+      SHARES `framework` WITH SR 15-19, and both are in_force with null volume,
+      so `applicability` is the SOLE discriminator. This is the corpus's
+      cleanest test of applicability as a filter dimension: a query about a
+      Category III firm that retrieves this document is wrong in a way no
+      reader would catch, because the text reads perfectly plausibly.
+      The 2021 revision changed APPLICABILITY, not substance, so status is
+      in_force and this is NOT a version pair.
+    verified: true
+
+  - doc_id: sr-15-19-2015r2021
+    short_name: SR 15-19
+    file: data/StressTesting/CCAR/sr15-19.pdf
+    subject: STRESS_TESTING
+    framework: US_CAPITAL_PLANNING_GUIDANCE   # SHARED with sr-15-18
+    volume: null
+    jurisdiction: US
+    issuer: FED
+    doc_type: supervisory_guidance
+    doc_role: consolidated
+    effective_from: 2015-12-18
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: US_CATEGORY_II_III
+    authority_rank: 3
+    source_url: https://www.federalreserve.gov/supervisionreg/srletters/sr1519.htm
+    notes: >
+      Federal Reserve guidance on supervisory assessment of capital planning
+      and positions, Category II/III firms. 31 pages.
+      Issued 18 Dec 2015, revised 15 Jan 2021 to apply to US BHCs, US
+      intermediate holding companies of foreign banking organizations, and
+      covered savings and loan holding companies subject to CATEGORY II or III
+      standards. The IHC and covered-SLHC inclusion is a real difference from
+      SR 15-18, not just a threshold change.
+      This file is the ATTACHMENT to SR 15-19, not the transmittal letter.
+    verified: true
+
+  - doc_id: fed-2026-scenarios
+    short_name: 2026 Stress Test Scenarios
+    file: data/StressTesting/CCAR/Fed_2026_StressTest_Scenarios.pdf
+    subject: STRESS_TESTING
+    framework: DFAST                # SHARED with fed-2026-dfast-results
+    volume: null
+    jurisdiction: US
+    issuer: FED
+    doc_type: reference_data
+    doc_role: standalone
+    effective_from: 2026-02-01
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: US_CATEGORY_I_TO_IV
+    authority_rank: 0               # REFERENCE DATA — states no requirement
+    source_url: https://www.federalreserve.gov/supervisionreg/dfa-stress-tests.htm
+    notes: >
+      2026 Stress Test Scenarios, February 2026. 42 pages. Baseline and
+      severely adverse macroeconomic paths for the 2026 cycle.
+      authority_rank 0 IS THE WHOLE POINT of this row. This document contains
+      numbers, not requirements. Asked "what unemployment rate must a bank
+      assume?", the honest answer cites this; asked "what does the Fed REQUIRE
+      for capital planning?", it must never be retrieved. Rank 0 makes that
+      distinction mechanical instead of hoped-for.
+      Superseded annually in substance but NOT marked superseded — the 2025
+      scenarios are not in the corpus, and each year's scenarios remain the
+      correct answer for that year's cycle.
+      KNOWN COLLISION: shares framework, status, subject and applicability with
+      fed-2026-dfast-results, with nothing structural separating them.
+      ACCEPTED — both are rank 0 and already excluded from every requirement
+      question.
+    verified: true
+
+  - doc_id: fed-2026-dfast-results
+    short_name: 2026 DFAST Results
+    file: data/StressTesting/CCAR/Fed_2026_DFAST_Results.pdf
+    subject: STRESS_TESTING
+    framework: DFAST                # SHARED with fed-2026-scenarios
+    volume: null
+    jurisdiction: US
+    issuer: FED
+    doc_type: reference_data
+    doc_role: standalone
+    effective_from: 2026-06-01
+    effective_to: null
+    status: in_force
+    supersedes: []
+    superseded_by: []
+    revises: []
+    revised_by: []
+    applicability: US_CATEGORY_I_TO_IV
+    authority_rank: 0               # REFERENCE DATA
+    source_url: https://www.federalreserve.gov/supervisionreg/dfa-stress-tests.htm
+    notes: >
+      2026 Federal Reserve Stress Test Results, June 2026. 68 pages.
+      Firm-by-firm outcomes of the 2026 supervisory stress test.
+      Same rank-0 logic as the scenarios: outcomes, never requirements.
+      CONCRETE HAZARD: its CET1 tables contain the numeral 4.5 — the same
+      number as the Basel minimum in RBC. A pipeline that ignores
+      authority_rank gets FALSE CORROBORATION from two documents at once and
+      answers "4.5%" to a US CET1 requirement question with high confidence.
+      Neither source is US law. This is the corpus's best refusal test — see
+      known_gaps: 12 CFR 217 for the correct response.
+    verified: true
+
+# =============================================================================
+# NOT IN v1 — present on disk, deliberately excluded.
+# =============================================================================
+#   data/Others/ifrs-9-financial-instruments-ILLUSTRATIVE-EXAMPLES-2023.pdf
+#       IFRS 9 illustrative examples. Examples are NOT requirements — would
+#       need doc_type: reference_data and authority_rank 0 like the Fed
+#       scenarios. May also resolve the IFRS 9 edition question.
+#   data/Others/ECB_Guide_to_Internal_Models_2025.pdf
+#       EU. Straddles MODEL_RISK_MANAGEMENT and CAPITAL_ADEQUACY — `subject`
+#       genuinely ambiguous, which the orthogonal split now handles better.
+#       ALSO: an IMPLEMENTING document, so the first case where issuer would
+#       differ from regime. Adding it is what would justify a `regime` field;
+#       today regime is 1:1 with issuer, so no such field exists.
+#   data/Others/RBI_Draft_MRM_Guidance_2026.pdf
+#       India, DRAFT. High-value later as the status=draft safety test:
+#       a draft cited as binding is the worst output this system could produce.
+#   data/Others/CECL_ASU_2016-13.pdf, CECL_ASU_2022-02.pdf
+#       DROPPED 2026-08-11. ASUs are AMENDING instruments (2 of 8 held), and
+#       extraction destroys strikethrough so deleted+added text merges into
+#       nonsense. Semantic inversion, not noise.
+#   data/Others/EBA_Loan_Origination_GL_2020-06.pdf
+#       EU guidelines. Fourth jurisdiction; not needed for v1 axes.
+#
+# DELETED FROM DISK 2026-08-12:
+#   data/StressTesting/SRP30.pdf — "Risk management", misfiled under stress
+#   testing. Replaced by SRP32 ("Credit risk"), which carries genuine stress
+#   testing content and sits in Anuj's own domain.
+# =============================================================================
