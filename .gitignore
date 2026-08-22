@@ -19,6 +19,15 @@ env/
 # Environment variables
 .env
 
+# Office lock files — created while a workbook/document is OPEN, deleted when
+# it closes. Two of these (~$LCDataDictionary.xlsx) reached a commit already.
+~$*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
 # Large datasets (exceed GitHub's 100 MB per-file limit)
 #
 # The old rule `Deep-Learning/creditcard.csv` never matched, because the file
