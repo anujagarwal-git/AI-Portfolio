@@ -36,8 +36,9 @@ class _Label:
 
 
 class _Item:
-    def __init__(self, text, label="TEXT", page=1):
+    def __init__(self, text, label="TEXT", page=1, orig=None):
         self.text = text
+        self.orig = orig            # Docling supplies both; `orig` keeps markers
         self.label = _Label(label)
         self.prov = [_Prov(page)]
 
@@ -69,6 +70,41 @@ def test_math_subscripts_survive_as_content():
     assert out == "Time period parameters: Mi, Ei, Si and Ti"
     for token in ("Mi", "Ei", "Si", "Ti"):
         assert token in out, f"subscript {token} was destroyed"
+
+
+def test_enumeration_markers_are_recovered_from_orig():
+    """Docling's `text` STRIPS the list marker; `orig` keeps it.
+
+    Real pair from 12 CFR 225.8. Reading `text` discarded these across the
+    corpus — 913 in CRE, 678 in Part 252. In the CFR the enumeration IS the
+    structure (148 paragraphs under one heading), and it is also how the
+    provision gets cited: "12 CFR 225.8(b)(1)", not "page 3".
+    """
+    doc = _Doc([_Item(
+        text="Applicability. Except as provided in paragraph (c) of this section",
+        orig="(1) Applicability. Except as provided in paragraph (c) of this section",
+    )])
+    out = clean_document(doc, _row("cfr-12-225-8"))
+
+    assert out.texts[0].text.startswith("(1) "), "enumeration marker lost"
+    assert out.report["markers_recovered"] == 1
+
+
+def test_orig_is_ignored_when_it_matches_text():
+    """Most items have orig == text. Those must not be counted as recoveries,
+    or the metric stops meaning anything."""
+    same = "A bank must maintain adequate capital."
+    doc = _Doc([_Item(text=same, orig=same)])
+    out = clean_document(doc, _row())
+
+    assert out.texts[0].text == same
+    assert out.report["markers_recovered"] == 0
+
+
+def test_missing_orig_falls_back_to_text():
+    """Not every source supplies `orig`. Absence must be harmless."""
+    doc = _Doc([_Item(text="plain text with no orig field")])
+    assert clean_document(doc, _row()).texts[0].text == "plain text with no orig field"
 
 
 def test_glossary_link_is_unwrapped_not_deleted():

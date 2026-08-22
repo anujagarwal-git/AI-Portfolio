@@ -93,6 +93,25 @@ SEMANTIC_BREAKPOINT_PERCENTILE = 90
 PARENTDOC_PARENT = "section"
 PARENTDOC_CHILD = "paragraph"
 
+# --- child sizing, set from the measured corpus distribution -----------------
+# 10,724 children: p25=84  median=184  p75=344  p90=559  p99=1,076  max=3,172
+#
+# MERGE below the floor rather than merging everything to a target. Parentdoc's
+# whole premise is a SMALL, PRECISE retrieval key, so normal-sized children are
+# left exactly as they are. Only the noise is fixed: 34.7% of children are under
+# 120 chars, and the most frequent are 'FAQ' (76x), 'FAQ1' (48x), 'Footnotes'
+# (31x) and bare numerals. Those embed to a vector that means nothing and can
+# match anything.
+CHILD_MIN_CHARS = 120        # below this, absorb the next sibling
+CHILD_MERGE_CEILING = 700    # stop merging here, so a run of fragments cannot
+                             # snowball into a chunk the size of its parent
+
+# SPLIT above this. bge-small-en-v1.5 accepts 512 tokens (~1,800-2,000 chars);
+# beyond that the tail is silently dropped, which is the failure mode with no
+# error message. Only 6 children in the whole corpus (0.1%) are affected —
+# 4 in the IFRS 9 extract, 1 in CRE53, 1 in 12 CFR 252.
+CHILD_MAX_CHARS = 1_800
+
 # =============================================================================
 # VECTOR STORE — ONE COLLECTION PER CHUNKING STRATEGY
 #

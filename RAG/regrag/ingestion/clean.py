@@ -117,6 +117,7 @@ class CleanedDoc:
 def clean_document(doc, row: Document) -> CleanedDoc:
     """Return a cleaned copy of `doc`. The original is never mutated."""
     counts = {
+        "markers_recovered": 0,
         "dropped_page_furniture": 0,
         "dropped_empty": 0,
         "footnote_markers_clean": 0,
@@ -136,7 +137,7 @@ def clean_document(doc, row: Document) -> CleanedDoc:
             counts["dropped_page_furniture"] += 1
             continue
 
-        text = (getattr(raw, "text", "") or "")
+        text = _source_text(raw, counts)
         cleaned = _clean_text(text, counts, residue)
 
         if not cleaned.strip():
@@ -162,7 +163,10 @@ def clean_document(doc, row: Document) -> CleanedDoc:
         "short_name": row.short_name,
         "items_in": len(doc.texts),
         "items_out": len(items),
-        "chars_in": sum(len(getattr(t, "text", "") or "") for t in doc.texts),
+        "chars_in": sum(
+            len((getattr(t, "orig", "") or "").strip() or (getattr(t, "text", "") or ""))
+            for t in doc.texts
+        ),
         "chars_out": sum(len(i.text) for i in items),
         "n_footnotes": len(footnote_lengths),
         "footnote_len_min": min(footnote_lengths) if footnote_lengths else None,
@@ -190,6 +194,38 @@ def clean_report(doc, row: Document) -> dict:
 # =============================================================================
 # INTERNALS
 # =============================================================================
+
+
+def _source_text(item, counts: dict) -> str:
+    """Prefer Docling's `orig` over `text`.
+
+    Docling gives each item BOTH. `text` is its tidied version, and tidying
+    STRIPS THE ENUMERATION MARKER:
+
+        orig : "(1) Applicability. Except as provided in paragraph (c)..."
+        text : "Applicability. Except as provided in paragraph (c)..."
+
+    Reading `text` discarded those markers across the whole corpus — 913 in
+    CRE, 678 in 12 CFR Part 252, 106 in PAP, 92 in SS1/23. Two costs:
+
+      STRUCTURE   In the CFR the enumeration IS the structure. 12 CFR 225.8 has
+                  148 paragraphs under a single heading, so (a)/(b)/(c) is the
+                  only signal of where one provision ends and the next begins.
+
+      CITATION    "12 CFR 225.8(b)(1)" is how an examiner cites. Without the
+                  marker the best available citation is a page number, which
+                  nobody can act on.
+
+    Verified safe before switching: across 1,859 differing items in six
+    documents, `orig` was NEVER shorter than `text` — it only ever restores a
+    prefix. So this cannot lose content.
+    """
+    orig = (getattr(item, "orig", "") or "").strip()
+    text = (getattr(item, "text", "") or "")
+    if orig and orig != text.strip():
+        counts["markers_recovered"] += 1
+        return orig
+    return text
 
 
 def _label(item) -> str:
