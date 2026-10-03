@@ -48,6 +48,53 @@ class _Doc:
         self.texts = items
 
 
+class _Ref:
+    def __init__(self, cref):
+        self.cref = cref
+
+
+class _Table:
+    def __init__(self, data, page=1):
+        self._data = data
+        self.prov = [_Prov(page)]
+
+    def model_dump(self):
+        return {"data": self._data}
+
+
+class _Group:
+    def __init__(self, refs):
+        self.children = [_Ref(r) for r in refs]
+
+
+class _Body:
+    def __init__(self, refs):
+        self.children = [_Ref(r) for r in refs]
+
+
+class _StructuredDoc:
+    """Mirrors DoclingDocument closely enough to exercise _iter_document:
+    texts, tables, groups and a body whose children reference all three."""
+
+    def __init__(self, texts, tables=(), groups=(), body_refs=()):
+        self.texts = list(texts)
+        self.tables = list(tables)
+        self.groups = list(groups)
+        self.body = _Body(list(body_refs))
+
+
+def _cell(text, row=0, col=0):
+    return {"text": text, "start_row_offset_idx": row, "start_col_offset_idx": col}
+
+
+def _table_data(rows, num_cols):
+    """rows: list of lists of cell text -> Docling's grid + table_cells shape."""
+    grid = [[_cell(t, r, c) for c, t in enumerate(row)] for r, row in enumerate(rows)]
+    cells = [c for row in grid for c in row if c["text"]]
+    return {"grid": grid, "table_cells": cells,
+            "num_rows": len(rows), "num_cols": num_cols}
+
+
 def _row(doc_id="bcbs-cre-consolidated"):
     return load().by_id(doc_id)
 
@@ -205,7 +252,109 @@ def test_empty_items_dropped():
 
 
 # =============================================================================
-# 3. THE CONTRACT WITH THE REST OF THE PIPELINE
+# 3. PROSE-LAYOUT TABLES — content Docling files under `tables`
+# =============================================================================
+
+
+def test_ifrs9_style_hanging_indent_is_recovered():
+    """IFRS 9's paragraph numbers sit in a left margin, so Docling reads the
+    layout as a two-column table. That text lives ONLY in `tables` — 16,224
+    characters of IFRS 9, including the ECL provisions, were absent from the
+    index entirely, which is why the document scored 0% citable.
+
+    Flattening puts the number back at the start of the line, so the existing
+    locator extractor recovers '5.5.12' with no special handling.
+    """
+    data = _table_data([
+        ["5.5.12", "If the contractual cash flows on a financial asset have been "
+                   "renegotiated or modified and the financial asset was not "
+                   "derecognised, an entity shall assess whether there has been a "
+                   "significant increase in credit risk."],
+        ["", "(a) the risk of a default occurring at the reporting date based on "
+             "the modified contractual terms of the financial asset."],
+    ], num_cols=2)
+    doc = _StructuredDoc(texts=[], tables=[_Table(data)], body_refs=["#/tables/0"])
+    out = clean_document(doc, _row("ifrs9-extract")).texts
+
+    assert len(out) == 2, [i.text[:40] for i in out]
+    assert out[0].text.startswith("5.5.12 If the contractual")
+    assert "significant increase in credit risk" in out[0].text
+
+
+def test_genuine_grid_is_left_alone():
+    """Docling loses roughly 40% of values in multi-column numeric tables, so
+    those are deferred to a pdfplumber pass rather than indexed with
+    known-wrong numbers. Only prose layouts are recovered here."""
+    data = _table_data([
+        ["Rating", "1 year", "5 years", "1 year", "5 years"],
+        ["AAA", "15%", "20%", "15%", "70%"],
+        ["AA+", "15%", "30%", "15%", "90%"],
+    ], num_cols=5)
+    doc = _StructuredDoc(texts=[], tables=[_Table(data)], body_refs=["#/tables/0"])
+
+    assert clean_document(doc, _row("bcbs-cre-consolidated")).texts == []
+
+
+def test_contents_listing_is_not_treated_as_content():
+    """A table of contents is furniture. Dotted leaders identify it."""
+    data = _table_data([
+        ["Introduction .................................................", "4"],
+        ["Definition ...................................................", "6"],
+        ["Objectives ..................................................."
+         " and a long trailing description to clear the prose threshold "
+         "so only the dotted leaders can disqualify it.", "8"],
+    ], num_cols=2)
+    doc = _StructuredDoc(texts=[], tables=[_Table(data)], body_refs=["#/tables/0"])
+
+    assert clean_document(doc, _row("bcbs-239-2013")).texts == []
+
+
+def test_text_nested_inside_a_group_is_not_dropped():
+    """body.children is NOT flat — it contains '#/groups/N' entries whose own
+    children hold the text. A flat walk silently dropped more than half of
+    IFRS 9 while appearing to work. The traversal must recurse."""
+    texts = [_Item("Top-level paragraph, directly under body."),
+             _Item("Nested paragraph, reachable only through the group.")]
+    doc = _StructuredDoc(
+        texts=texts,
+        groups=[_Group(["#/texts/1"])],
+        body_refs=["#/texts/0", "#/groups/0"],
+    )
+    out = clean_document(doc, _row()).texts
+
+    assert len(out) == 2, "grouped text was dropped"
+    assert "Nested paragraph" in out[1].text
+
+
+def test_reading_order_is_preserved_across_texts_and_tables():
+    """A recovered table row must land where it sits in the document, so it
+    falls inside the right chapter and inherits that chapter's date."""
+    data = _table_data([
+        ["5.5.12", "A recovered provision, written long enough to clear the prose "
+                   "threshold that separates a hanging-indent layout from a genuine "
+                   "numeric grid, with plenty of characters to spare."],
+    ], num_cols=2)
+    doc = _StructuredDoc(
+        texts=[_Item("Before the table."), _Item("After the table.")],
+        tables=[_Table(data)],
+        body_refs=["#/texts/0", "#/tables/0", "#/texts/1"],
+    )
+    out = [i.text[:20] for i in clean_document(doc, _row("ifrs9-extract")).texts]
+
+    assert out[0].startswith("Before")
+    assert out[1].startswith("5.5.12")
+    assert out[2].startswith("After")
+
+
+def test_falls_back_to_texts_when_there_is_no_body():
+    """Any backend without a body — and every stub in these tests — must still
+    work."""
+    doc = _Doc([_Item("Plain paragraph with no body structure at all.")])
+    assert len(clean_document(doc, _row()).texts) == 1
+
+
+# =============================================================================
+# 4. THE CONTRACT WITH THE REST OF THE PIPELINE
 # =============================================================================
 
 

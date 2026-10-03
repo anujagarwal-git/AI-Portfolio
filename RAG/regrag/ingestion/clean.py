@@ -1,20 +1,5 @@
 """Cleaning — removes extraction artifacts without removing content.
 
-THIS IS THE ONLY DESTRUCTIVE STEP IN THE PIPELINE. Everything else adds
-metadata; this one deletes text. And the dangerous direction is over-cleaning,
-because over-cleaning is INVISIBLE: text that has lost something still reads
-fluently, still embeds, still retrieves, and is silently wrong.
-
-The concrete example that shaped this module. CRE contains:
-
-    Time period parameters: M{{i}}, E{{i}}, S{{i}} and T{{i}}
-
-Those are mathematical subscripts in the counterparty credit risk formulas.
-CRE also contains {{IRB}}, which IS a glossary link. Same syntax, two meanings.
-Strip {{...}} wholesale and the formula becomes "M, E, S and T" — still looks
-like a formula, no longer means anything, and nothing anywhere reports it.
-So the rule is UNWRAP, NEVER DELETE: {{X}} -> X. Right for the glossary link,
-survivable for the subscript.
 
 TWO KINDS OF CLEANING, and they carry very different risk:
 
@@ -28,13 +13,7 @@ TWO KINDS OF CLEANING, and they carry very different risk:
                     corruption also tolerate false positives, so every rule is
                     COUNTED and anything that looks like a marker but matches
                     no known pattern is REPORTED rather than silently left or
-                    silently removed.
-
-ORDER: clean -> sections -> chunk. Cleaning first means chapter detection is
-not searching past page footers, and chunk boundaries are never influenced by
-an artifact. CleanedDoc exposes `.texts`, so find_sections() consumes it
-unchanged.
-"""
+                    silently removed."""
 
 from __future__ import annotations
 
@@ -68,6 +47,69 @@ _LIGATURES = {"ﬀ": "ff", "ﬁ": "fi", "ﬂ": "fl", "ﬃ": "ffi",
               "–": "-", "—": "-", " ": " "}
 
 _WS = re.compile(r"[ \t]{2,}")
+
+# =============================================================================
+# PROSE-LAYOUT TABLES
+#
+# Docling reports some things as tables that are not grids at all — a hanging
+# indent, a glossary, an FAQ block, a footnote list. IFRS 9 is the clearest
+# case: its paragraph numbers sit in a left margin, so the layout model reads
+#
+#     r0 c0 '5.5.12'   r0 c1 'If the contractual cash flows on a financial...'
+#     r1 c1 '(a)'      r1 c2 'the risk of a default occurring at the...'
+#
+# as a two-column table. That text lives ONLY in `tables` — it is NOT
+# duplicated in `texts` — so 16,224 characters of IFRS 9 (14% of the document,
+# including the ECL provisions) were absent from the index entirely, and every
+# paragraph number with them, which is why IFRS 9 scored 0% citable.
+#
+# Corpus-wide this recovers 45,730 characters across 28 tables: IFRS 9's
+# provisions, BCBS 239's glossary, CAP's FAQ blocks and footnote lists.
+#
+# GENUINE GRIDS ARE NOT TOUCHED. Docling's cell extraction is unreliable on
+# numeric tables — roughly 40% of rows in multi-column tables lose a value —
+# so those are deferred to a separate pdfplumber pass rather than indexed with
+# known-wrong numbers.
+# =============================================================================
+
+PROSE_TABLE_MAX_COLS = 3
+PROSE_TABLE_MIN_CELL = 120        # at least one cell of real prose
+
+# Dotted leaders: 'Introduction .......... 4'. A table of contents is furniture.
+_TOC_LEADER = re.compile(r"\.{5,}")
+
+
+def _is_prose_table(data: dict) -> bool:
+    cells = data.get("table_cells") or []
+    if not cells or (data.get("num_cols") or 0) > PROSE_TABLE_MAX_COLS:
+        return False
+    if not any(len(c.get("text") or "") > PROSE_TABLE_MIN_CELL for c in cells):
+        return False
+    # a contents listing is furniture, not content
+    dotted = sum(1 for c in cells if _TOC_LEADER.search(c.get("text") or ""))
+    return dotted < max(2, len(cells) // 4)
+
+
+def _prose_table_rows(data: dict) -> list[str]:
+    """One line per row: cells joined left to right.
+
+    For IFRS 9 this yields '5.5.12 If the contractual cash flows...', which
+    puts the paragraph number exactly where the locator extractor expects it —
+    so the citation scheme is recovered with no special handling.
+    """
+    grid = data.get("grid") or []
+    out: list[str] = []
+    for row in grid:
+        seen, parts = None, []
+        for c in row:
+            t = (c.get("text") or "").strip()
+            if t and t != seen:       # column spans repeat a cell across columns
+                parts.append(t)
+            seen = t or seen
+        line = " ".join(parts).strip()
+        if line:
+            out.append(line)
+    return out
 
 
 @dataclass
@@ -130,7 +172,7 @@ def clean_document(doc, row: Document) -> CleanedDoc:
     items: list[CleanItem] = []
     footnote_lengths: list[int] = []
 
-    for idx, raw in enumerate(doc.texts):
+    for idx, raw in _iter_document(doc):
         label = _label(raw)
 
         if label in DROP_LABELS:
@@ -161,11 +203,11 @@ def clean_document(doc, row: Document) -> CleanedDoc:
     report = {
         "doc_id": row.doc_id,
         "short_name": row.short_name,
-        "items_in": len(doc.texts),
+        "items_in": sum(1 for _ in _iter_document(doc)),
         "items_out": len(items),
         "chars_in": sum(
             len((getattr(t, "orig", "") or "").strip() or (getattr(t, "text", "") or ""))
-            for t in doc.texts
+            for _, t in _iter_document(doc)
         ),
         "chars_out": sum(len(i.text) for i in items),
         "n_footnotes": len(footnote_lengths),
@@ -194,6 +236,86 @@ def clean_report(doc, row: Document) -> dict:
 # =============================================================================
 # INTERNALS
 # =============================================================================
+
+
+class _TableLine:
+    """One row of a prose-layout table, presented as if it were a text item.
+
+    Keeps the rest of clean.py, sections.py and chunker.py unaware that tables
+    exist — a recovered IFRS 9 paragraph flows through exactly like any other
+    paragraph, and lands in the right chapter with the right effective date.
+    """
+
+    __slots__ = ("text", "orig", "label", "prov")
+
+    def __init__(self, text: str, page):
+        self.text = self.orig = text
+        self.label = "TEXT"
+        self.prov = [_Prov(page)] if page is not None else []
+
+
+def _iter_document(doc):
+    """Yield (index, item) in READING ORDER, including prose-layout tables.
+
+    Docling records reading order in `body.children`, which interleaves texts
+    and tables. Walking `doc.texts` alone — as this module used to — skips
+    every table, and table text is NOT duplicated into `texts`.
+
+    Falls back to `doc.texts` when there is no body (test stubs, and any
+    backend that does not provide one).
+    """
+    body = getattr(doc, "body", None)
+    children = getattr(body, "children", None) if body is not None else None
+    texts = list(getattr(doc, "texts", []) or [])
+    tables = list(getattr(doc, "tables", []) or [])
+    groups = list(getattr(doc, "groups", []) or [])
+
+    if not children:
+        yield from enumerate(texts)
+        return
+
+    def ref_path(ref) -> str:
+        return getattr(ref, "cref", None) or (
+            ref.get("$ref", "") if isinstance(ref, dict) else str(ref)
+        )
+
+    counter = [0]
+    seen_groups: set[int] = set()
+
+    def walk(refs):
+        """Depth-first, because body.children is NOT flat.
+
+        It contains `#/groups/N` entries whose own children hold the text.
+        Walking only the top level dropped every grouped item — more than half
+        of IFRS 9 — while appearing to work. Recursion is not optional here.
+        """
+        for ref in refs:
+            path = ref_path(ref)
+            if "/texts/" in path:
+                n = int(path.rsplit("/", 1)[-1])
+                if n < len(texts):
+                    yield counter[0], texts[n]
+                    counter[0] += 1
+            elif "/groups/" in path:
+                n = int(path.rsplit("/", 1)[-1])
+                if n < len(groups) and n not in seen_groups:
+                    seen_groups.add(n)
+                    yield from walk(getattr(groups[n], "children", []) or [])
+            elif "/tables/" in path:
+                n = int(path.rsplit("/", 1)[-1])
+                if n >= len(tables):
+                    continue
+                tbl = tables[n]
+                data = tbl.model_dump().get("data", {}) if hasattr(tbl, "model_dump") else {}
+                if not _is_prose_table(data):
+                    continue      # genuine grid — deferred to the pdfplumber pass
+                prov = getattr(tbl, "prov", None)
+                page = prov[0].page_no if prov else None
+                for line in _prose_table_rows(data):
+                    yield counter[0], _TableLine(line, page)
+                    counter[0] += 1
+
+    yield from walk(children)
 
 
 def _source_text(item, counts: dict) -> str:

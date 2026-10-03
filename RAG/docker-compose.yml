@@ -8,3 +8,30 @@
     volumes:
       - ./qdrant_storage:/qdrant/storage
     restart: unless-stopped
+
+  # OBSERVABILITY (Stage 10). Phoenix is the trace VIEWER and collector; it
+  # receives spans over OTLP from regrag and stores them in SQLite.
+  #   6006 = web UI *and* the OTLP/HTTP collector (same port, both)
+  #   4317 = OTLP/gRPC collector
+  # WHY A NAMED VOLUME and not ./phoenix_data like qdrant: the container writes
+  # SQLite as a non-root user. A Windows bind mount hands it a share whose
+  # permissions it does not control, and SQLite fails on locking there. A named
+  # volume is managed by Docker, so the traces survive `docker compose down`.
+  # `docker volume rm rag_phoenix_data` is what deletes them.
+  # TODO pin the tag. `latest` is used for the FIRST pull only; read the version
+  # the UI reports, then replace it here, per the pinned-versions convention.
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    container_name: phoenix
+    ports:
+      - "6006:6006"
+      - "4317:4317"
+    environment:
+      - PHOENIX_WORKING_DIR=/mnt/data
+    volumes:
+      - phoenix_data:/mnt/data
+    restart: unless-stopped
+
+volumes:
+  phoenix_data:
+    driver: local

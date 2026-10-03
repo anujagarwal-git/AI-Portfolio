@@ -1,0 +1,50 @@
+{
+  "run": "golden_run_20260910T064424Z.json",
+  "generator_config_hash": "qwen3:1.7b|answer_v3_json@30c7a8e59878a638|t0.0|ctx16384|floor0.0|facet6.0|renderv2|align0.65/0.05",
+  "layers": "1+2+3a",
+  "n_claims": 104,
+  "cited": 104,
+  "valid": 104,
+  "in_window": 103,
+  "checkable": 104,
+  "unmeasurable_3a": 0,
+  "rows_without_evidence": [],
+  "by_mode": {
+    "single_document": {
+      "n": 56,
+      "cited": 56,
+      "valid": 56,
+      "checkable": 56,
+      "inwin": 55
+    },
+    "document_fanout": {
+      "n": 16,
+      "cited": 16,
+      "valid": 16,
+      "checkable": 16,
+      "inwin": 16
+    },
+    "jurisdiction_fanout": {
+      "n": 22,
+      "cited": 22,
+      "valid": 22,
+      "checkable": 22,
+      "inwin": 22
+    },
+    "version_fanout": {
+      "n": 8,
+      "cited": 8,
+      "valid": 8,
+      "checkable": 8,
+      "inwin": 8
+    },
+    "fallback": {
+      "n": 2,
+      "cited": 2,
+      "valid": 2,
+      "checkable": 2,
+      "inwin": 2
+    }
+  },
+  "note": "3b (is it the RIGHT paragraph) is not here - align.py chooses the paragraph, so it cannot grade its own choice. See the hand-graded 3b sample."
+}

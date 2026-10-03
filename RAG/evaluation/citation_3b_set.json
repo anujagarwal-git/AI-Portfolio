@@ -1,0 +1,109 @@
+{
+  "purpose": "Layer 3b of citation accuracy - IS THE CITED PARAGRAPH THE RIGHT ONE? align.py chooses the paragraph, so it cannot grade its own choice; this set is hand-graded against the parsed documents and reported as a SAMPLE, never as a rate.",
+  "built": "2026-09-10",
+  "rules_this_set_follows": [
+    "NEW questions. None appears in the 48-question golden set, so the aligner has not been tuned against them.",
+    "SINGLE-SOURCE. Each question is written so a correct answer should rest on ONE paragraph per claim. Cross-section questions are excluded on purpose: when a claim legitimately draws on three paragraphs, 'which paragraph did it come from' has no single right answer and the grade becomes an opinion.",
+    "ONE OR MORE PER PLAN MODE, so a failure can be attributed to a shape of question rather than to the corpus at large.",
+    "NOT VERIFIED AGAINST THE CORPUS. These are written from the registry's subject/jurisdiction labels, not from reading the documents. Anuj validates before use - any question whose answer turns out to span sections should be dropped, not graded."
+  ],
+  "how_to_grade": [
+    "1. Run the question. Record each claim, its label, and the locator align.py assigned.",
+    "2. Open the delivered window (the passage text) and read its paragraphs.",
+    "3. For each claim, decide by hand which paragraph the sentence actually came from.",
+    "4. Mark RIGHT / WRONG / UNGRADABLE. UNGRADABLE is not a failure - it means the claim drew on more than one paragraph, and that question should leave the set.",
+    "5. Report as 'n of m claims correctly located, hand-graded', with the misses quoted. Never as a percentage of the corpus."
+  ],
+  "questions": [
+    {
+      "id": "cb-01",
+      "plan_expected": "single_document",
+      "question": "What does BCBS 239 require of a bank's data architecture and IT infrastructure?",
+      "why_this_one": "A named document with a numbered principle - the cleanest possible single-paragraph target."
+    },
+    {
+      "id": "cb-02",
+      "plan_expected": "single_document",
+      "question": "What does SS1/23 say about the responsibilities of the board for model risk?",
+      "why_this_one": "UK side of MRM, named document, and the only UK document in the corpus - no jurisdiction ambiguity to confound the grade."
+    },
+    {
+      "id": "cb-03",
+      "plan_expected": "single_document",
+      "question": "What does Basel LEX define as a large exposure?",
+      "why_this_one": "A definition. Definitions live in one paragraph, which is exactly the shape 3b needs."
+    },
+    {
+      "id": "cb-04",
+      "plan_expected": "single_document",
+      "question": "What does 12 CFR 225.8 require a bank holding company to include in its capital plan?",
+      "why_this_one": "US rule text, named. Rule text is enumerated, so a claim that wanders between items is visible to a hand grader."
+    },
+    {
+      "id": "cb-05",
+      "plan_expected": "single_document",
+      "question": "What does SR 11-7 say about the independence of model validation?",
+      "why_this_one": "The corpus's only superseded document. Worth one question on its own: a citation into a historic document must still locate correctly."
+    },
+    {
+      "id": "cb-06",
+      "plan_expected": "single_document",
+      "question": "What does IFRS 9 require when measuring expected credit losses at initial recognition?",
+      "why_this_one": "IFRS 9 is the parent that produced empty containers in an earlier defect - a locator failure here would be informative twice over."
+    },
+    {
+      "id": "cb-07",
+      "plan_expected": "single_jurisdiction",
+      "question": "What do UK supervisory expectations require for the independence of model validation?",
+      "why_this_one": "No document named, one jurisdiction. Tests whether the locator survives when the planner, not the sentence, picked the document."
+    },
+    {
+      "id": "cb-08",
+      "plan_expected": "single_jurisdiction",
+      "question": "What must a US firm submit to the Federal Reserve as part of its annual stress test?",
+      "why_this_one": "The crowded US stress-testing cell - six documents. If a locator is going to point into the wrong window, this is where."
+    },
+    {
+      "id": "cb-09",
+      "plan_expected": "jurisdiction_fanout",
+      "question": "What do UK and US expectations each say about who owns a model?",
+      "why_this_one": "Two facets, one claim per side. Each claim should still rest on one paragraph, so 3b is gradable even though the answer is not single-source overall."
+    },
+    {
+      "id": "cb-10",
+      "plan_expected": "jurisdiction_fanout",
+      "question": "How do UK and US expectations each define a model?",
+      "why_this_one": "A definition on both sides - the fan-out equivalent of cb-03, and the strongest single-paragraph target this mode allows."
+    },
+    {
+      "id": "cb-11",
+      "plan_expected": "version_fanout",
+      "question": "What changed in US model risk guidance compared with the previous version?",
+      "why_this_one": "The only version pair the corpus holds (SR 26-2 against SR 11-7). A change claim must locate in BOTH windows, which is two grades from one question."
+    },
+    {
+      "id": "cb-12",
+      "plan_expected": "document_fanout",
+      "question": "What do Basel CAP and Basel RBC each say about the composition of Tier 1 capital?",
+      "why_this_one": "Two named documents, one search each. Tests that a locator is taken from the right document's window, not merely the right paragraph number."
+    },
+    {
+      "id": "cb-13",
+      "plan_expected": "fallback",
+      "question": "What is effective challenge in model risk management?",
+      "why_this_one": "Subject only - no document, no jurisdiction. The rule-6 fan-out that sat dead until 2026-09-09; its citations have never been located by hand."
+    },
+    {
+      "id": "cb-14",
+      "plan_expected": "fallback",
+      "question": "What is a significant increase in credit risk?",
+      "why_this_one": "Subject only, and a term of art with a definition - so the right paragraph is decidable by a reader who is not a credit specialist."
+    },
+    {
+      "id": "cb-15",
+      "plan_expected": "single_document",
+      "question": "What does Basel SRP32 say about the governance of a bank's internal stress testing programme?",
+      "why_this_one": "A global stress-testing document, to check that the crowded US cell in cb-08 is a jurisdiction problem and not a subject problem."
+    }
+  ]
+}

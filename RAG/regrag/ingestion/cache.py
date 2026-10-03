@@ -1,33 +1,4 @@
-"""Parse cache — parse each PDF once, reuse it everywhere.
-
-WHY THIS EXISTS.
-
-Nothing cached parses. `save_processed()` has been in parser.py since July and
-is called by no one, so every test run, every CLI run and every experiment
-re-parsed from PDF. That is ~1,100 pages through Docling on CPU, with CRE alone
-at 323. It is why `pytest -q` takes two minutes for a handful of documents.
-
-Stage 3 is where that stops being tolerable. Chunking is the stage you iterate
-on — try a parent cap, look, adjust, look again. Without a cache each loop pays
-for CRE again. With one, the second run is a disk read.
-
-TWO THINGS IN THE CACHE KEY, and both matter:
-
-  source hash      Content, not mtime. mtime lied once already — four files in
-                   this corpus share a timestamp within 65 seconds because they
-                   were bulk-copied, so mtime says nothing about the bytes.
-
-  docling version  A Docling upgrade CHANGES PARSE OUTPUT. We already saw its
-                   grouping differ from pdftotext in ways that broke chapter
-                   detection ('LEX10 Definitions' as one item vs two). A cache
-                   entry written by a different version is not the same parse,
-                   and silently reusing it would make a version upgrade
-                   invisible — the worst kind of change.
-
-A cache that can serve a stale entry is worse than no cache, because the run
-looks normal. Both keys are in the filename, so a mismatch MISSES rather than
-being detected later.
-"""
+"""Parse cache — parse each PDF once, reuse it everywhere."""
 
 from __future__ import annotations
 
@@ -56,11 +27,6 @@ def docling_version() -> str:
 
 
 def source_hash(path: Path) -> str:
-    """SHA-256 of the file bytes, first 16 hex chars.
-
-    Streamed rather than read whole: BASEL_PAP was 14 MB, and an image-only
-    variant of it was larger still.
-    """
     h = hashlib.sha256()
     with open(path, "rb") as fh:
         for block in iter(lambda: fh.read(1 << 20), b""):
@@ -79,11 +45,6 @@ def cache_path(doc_id: str, sha: str, dv: str | None = None) -> Path:
 
 
 def parse_cached(path: Path | str, doc_id: str, *, refresh: bool = False, verbose: bool = True):
-    """Return a DoclingDocument, from cache when the key matches.
-
-    `doc_id` only names the cache file; correctness rests entirely on the
-    source hash and the Docling version.
-    """
     from regrag.ingestion.parser import parse_pdf  # local: keeps import graph flat
 
     path = Path(path)
@@ -129,11 +90,6 @@ def cache_status(rows) -> list[dict]:
 
 
 def purge_stale(rows, *, dry_run: bool = True) -> list[str]:
-    """Remove cache entries whose key no longer matches any current source.
-
-    Stale entries are harmless — a mismatched key simply misses — but they
-    accumulate a copy per PDF revision and per Docling upgrade.
-    """
     keep = set()
     for row in rows:
         p = config.PROJECT_ROOT / row.file

@@ -1,30 +1,12 @@
-"""Sectioning — splits a parsed document into its chapters and finds each
-chapter's version-effective date.
-
+"""
 WHY THIS MODULE EXISTS.
 
-Five of the six BASEL_FRAMEWORK files bundle several chapters, and EVERY
-CHAPTER carries its own "Version effective as of" stamp. SCO is the extreme
-case: its introduction chapter is effective 15 Dec 2019 while its cryptoasset
-chapter is effective 01 Jan 2026. So `effective_from` is deliberately null on
-those registry rows — a single document-level date would be false for most of
-the file. This module supplies the missing per-chapter date, and until it
-exists those five documents CANNOT BE INDEXED. That is ~510 of ~1,100 pages,
-CRE included.
+Sectioning — splits a parsed document into its chapters and finds each
+chapter's version-effective date for metadata.
 
-THE FAILURE MODE THIS MODULE IS DESIGNED AROUND.
-
-If chapter detection silently fails on a Basel file, the natural result is one
-whole-document section with effective_from=None — which is byte-for-byte
-identical to a correct result for SR 26-2, a document that genuinely has no
-chapters. A broken parse of CRE would look exactly like a healthy parse of an
-SR letter, and 323 pages would be indexed with no chapter dates while nothing
-reported a problem.
-
-So this module does NOT guess from the text alone. It asks the registry what
-to expect: a BASEL_FRAMEWORK document MUST yield chapters, and anything else
-must not. Two situations that produce the same output are forced apart by
-metadata rather than left to collapse into one value.
+Basel files bundle several chapters, and each chapter has its own "Version effective as of" date. 
+SCO's introduction chapter dates from 2019, while its crypto chapter is effective from 2026. 
+This module splits a document into chapters and finds each chapter's date, so every chunk later carries the right effective_from
 """
 
 from __future__ import annotations
@@ -133,7 +115,7 @@ def find_sections(doc, row: Document) -> list[Section]:
         p_from, p_to = _page_span(doc, idx, end)
         sections.append(
             Section(
-                kind="chapter",
+                kind="chapter", 
                 code=code,
                 effective_from=eff,
                 start_idx=idx,
@@ -205,16 +187,7 @@ def _chapter_starts(doc, volume: str) -> list[tuple[int, str]]:
     #
     #   volume="CRE"    a whole STANDARD -> its chapters are CRE20, CRE21, ...
     #   volume="SRP32"  a single CHAPTER lifted out of the SRP standard
-    #
-    # Deciding which by whether the volume already ends in digits keeps the
-    # registry honest — neither row has to be distorted to suit the parser.
-    # ANCHORED AT THE START, NOT THE WHOLE ITEM. Docling is inconsistent about
-    # this even within one file: LEX20 arrives as its own item 'LEX20', while
-    # LEX10 arrives merged with its title, 'LEX10 Definitions and application'.
-    # Requiring a whole-item match silently dropped LEX10 — one chapter in four,
-    # with no error, which is exactly the class of failure this module exists to
-    # prevent.
-    #
+    
     # The negative lookahead keeps cross-references out: 'LEX30.1' and 'LEX301'
     # must not open a section, while 'LEX30 Exposure measurement' must. Body
     # references like '20.2 ... as specified in LEX30' are excluded by the
@@ -226,10 +199,6 @@ def _chapter_starts(doc, volume: str) -> list[tuple[int, str]]:
     # spurious section; the body then has no version stamp and the whole
     # document fails to resolve.
     if re.search(r"\d$", volume):
-        # SINGLE-CHAPTER FILE (volume IS the chapter code, e.g. SRP32).
-        # Search ANYWHERE in the item, and take only the first hit. Docling
-        # renders this title block as 'Supervisory review process SRP32' —
-        # standard name first, code last — so a start anchor finds nothing.
         # Unanchored is safe here in a way it would NOT be for a multi-chapter
         # standard: there are no sibling chapters for a stray mention to be
         # confused with, and only the first match opens a section.

@@ -1,10 +1,28 @@
 # =============================================================================
-# RAG project — ignores SPECIFIC to this subtree.
+# RAG project — a subfolder of the AI-Portfolio repo (decided 2026-10-03).
 #
-# The repo root (../.gitignore) already covers: __pycache__, *.pyc, .venv/,
-# .ipynb_checkpoints/, .vscode/, .cursor/, .env, MENTOR_PROGRESS.md.
-# Only what it does NOT cover belongs here.
+# The parent ../.gitignore also covers some of the general entries below; they
+# are repeated here on purpose so this folder stays safe on its own.
 # =============================================================================
+
+# --- Python, editors, secrets ------------------------------------------------
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+.vscode/
+.cursor/
+.env
+
+# --- private working notes (not for the public repo) -------------------------
+MENTOR_PROGRESS.md
+CODE_STUDY_PROGRESS.md
+
+# --- parent-document store ---------------------------------------------------
+# Holds the FULL parent text of every corpus document (Basel CRE, IFRS 9 ...),
+# so it carries the same redistribution problem as the PDFs below. Derived:
+# rebuilt by the indexer from the corpus.
+data/index/
 
 # --- Qdrant local volume — 889 MB ------------------------------------------
 # THE ONE THAT WOULD BREAK THE PUSH. GitHub rejects files over 100 MB, and this
@@ -53,3 +71,6 @@ data/**/*.pdf
 # =============================================================================
 # Duplicate of docling.ipynb, kept locally, not worth publishing.
 notebooks/Prototype/*Copy*.ipynb
+
+# Stage 10 - audit log, machine-local
+logs/

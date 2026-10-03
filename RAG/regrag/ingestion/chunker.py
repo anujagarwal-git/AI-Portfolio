@@ -207,10 +207,7 @@ _TERMINAL = (".", "?", "!", ";", ":")
 # PURE NOISE — dropped, never merged into a neighbour.
 #
 # Merging noise into a real paragraph pollutes it; dropping it costs nothing,
-# because none of these carry meaning on their own. Measured across the corpus:
-# 313 items, and removing them eliminates 36% of all merges. The damage they
-# caused was visible — 'Page 3' glued to a sentence in SR 11-7, a run of
-# contents-page numbers ('1 2 3 5 9 16 21') glued to the opening paragraph.
+# because none of these carry meaning on their own. 
 _NOISE = re.compile(
     r"^(?:FAQ\s*\d*"          # 'FAQ' (76x), 'FAQ1' (48x)
     r"|Footnotes?"            # section stub (31x)
@@ -292,11 +289,6 @@ def _locator(text: str, chapter: str | None, parent_marker: str | None,
         BCBS 239  "21."                       ->  "BCBS 239 21"
         IFRS 9    "5.5.1"                     ->  "IFRS 9 5.5.1"
 
-    THE CHAPTER IS NOT REQUIRED. An earlier version returned None whenever
-    `chapter` was absent, which meant every non-Basel document scored 0%
-    citable even where the paragraph number was sitting at the start of the
-    text — 51% of BCBS 239, 43% of PAP, 13% of SS1/23, and all of IFRS 9.
-
     Falls back to the section heading, because for SR 26-2, SR 11-7 and d450 —
     which carry no paragraph numbers at all — the heading IS how they are cited
     ("SR 26-2, III. Overview of Model Risk").
@@ -365,14 +357,8 @@ def _assemble_children(items, span: ParentSpan) -> list[tuple[str, int, bool, in
       REPAIR SPLITS  rejoin a sentence Docling broke across a column or page
                      boundary — and nothing else.
 
-    An earlier version merged on SIZE ALONE: any item under 120 chars absorbed
-    whatever came next. That was wrong, and reading the output showed it. It
-    fused unrelated footnotes ('1 Basel Committee, Enhancements... 2 MIS in this
-    context refers to...'), glued page furniture onto prose ('Page 3 from those
-    calculations...'), and in SR 26-2 cut the $30 billion applicability
-    threshold in half and attached a footnote citation to the stump.
 
-    The repair now requires TWO SIGNALS TO AGREE:
+    TWO SIGNALS TO AGREE:
 
         the fragment does not end with terminal punctuation, AND
         the next item begins with a lowercase letter
@@ -388,10 +374,6 @@ def _assemble_children(items, span: ParentSpan) -> list[tuple[str, int, bool, in
                                                start sentences lowercase.
          1.2%   ends closed + next lowercase   ambiguous
 
-    Requiring both signals keeps the 3.2% and rejects the 23%. Everything else
-    is left exactly as it is: a short COMPLETE sentence is a perfectly good
-    retrieval key, and gluing it to an unrelated neighbour is what does harm.
-
     KNOWN LIMIT: 194 fragments still begin mid-sentence, because their other
     half sits ABOVE them and this only merges forward. Repairing those needs
     the page-geometry signal — see MENTOR_PROGRESS.md.
@@ -402,7 +384,7 @@ def _assemble_children(items, span: ParentSpan) -> list[tuple[str, int, bool, in
     ]
 
     # THE ENUMERATION MARKER LINE IS A HEADING, NOT A CHILD.
-    #
+    
     # For Basel a SECTION_HEADER opens a parent and is never itself embedded.
     # In the CFR the equivalent line — "(b) Scope and reservation of authority -"
     # — carries the label LIST_ITEM, so without this it becomes a child, merges
@@ -427,22 +409,8 @@ def _assemble_children(items, span: ParentSpan) -> list[tuple[str, int, bool, in
     # 2. SPLIT INTO TWO INTERLEAVED STREAMS.
     #
     # A body sentence continues into the next BODY item — never into a footnote
-    # that happens to sit between them on the page. In SR 26-2 the sentence
-    # "...banking organizations with over $30" continues as "billion in total
-    # assets", but a footnote and a page number sit in between:
-    #
-    #     [15] body      '...organizations with over $30'
-    #     [16] footnote  '1  See 12 CFR Part 4, Subpart F...'
-    #     [17] furniture '2'                       <- dropped by clean.py
-    #     [18] body      'billion in total assets...'
-    #
-    # Reading the kept stream in raw order, item 16 blocks the repair twice: it
-    # does not start lowercase (so 15 finds no continuation) and it ends with a
-    # full stop (so it takes none). Item 18 is then orphaned and becomes a chunk
-    # beginning mid-sentence — with the $30 billion threshold cut in half.
-    #
-    # Separating the streams fixes that and, as a side effect, makes a
-    # footnote/body merge structurally impossible.
+    # that happens to sit between them on the page. 
+
     body = [i for i in kept if not getattr(items[i], "is_footnote", False)]
     notes = [i for i in kept if getattr(items[i], "is_footnote", False)]
 

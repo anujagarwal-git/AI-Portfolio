@@ -1,0 +1,395 @@
+{
+ "models": [
+  "qwen3:1.7b",
+  "qwen3:4b"
+ ],
+ "rows": [
+  {
+   "question": "BASEL guidelines: what must a bank do before putting a model in production?",
+   "defect": "WRONG LOCATOR \u2014 all claims cited CRE53.56; they came from 53.50/53.51/53.55. This one is a CODE defect (parent-level locators), so do not credit the model.",
+   "n_passages": 2,
+   "chars": 11764,
+   "runs": [
+    {
+     "model": "qwen3:1.7b",
+     "seconds": 35.5,
+     "refused": null,
+     "text": "Before putting a model in production, a bank must seek approval from its supervisor to adopt an internal model method to estimate EAD [1]. A bank must meet all requirements in CRE53.6 to CRE53.60 and apply the internal model method to all exposures subject to counterparty credit risk, except for immaterial exposures [1].",
+     "sources": [
+      "[1] Basel CRE, CRE53.56 (in_force; eff. 2023-01-01)"
+     ],
+     "n_claims": 2,
+     "n_invalid": 0,
+     "n_weak": 0,
+     "config_hash": "qwen3:1.7b|answer_v3_json@30c7a8e59878a638|t0.0|ctx16384|floor0.0|facet6.0",
+     "claims": [
+      {
+       "text": "Before putting a model in production, a bank must seek approval from its supervisor to adopt an internal model method to estimate EAD.",
+       "citation": "Basel CRE, CRE53.56 (in_force; eff. 2023-01-01)",
+       "overlap": 0.75
+      },
+      {
+       "text": "A bank must meet all requirements in CRE53.6 to CRE53.60 and apply the internal model method to all exposures subject to counterparty credit risk, except for immaterial exposures.",
+       "citation": "Basel CRE, CRE53.56 (in_force; eff. 2023-01-01)",
+       "overlap": 0.8
+      }
+     ]
+    },
+    {
+     "model": "qwen3:4b",
+     "seconds": 170.7,
+     "refused": null,
+     "text": "The bank must demonstrate that it meets the Committee's general criteria for banks seeking to make use of internal models to assess market risk exposures, but in the context of assessing counterparty credit risk [1]. The bank must have internal procedures to verify that, prior to including a transaction in a netting set, the transaction is covered by a legally enforceable netting contract that meets the applicable requirements of the standardised approach to counterparty credit risk (CRE52), the credit risk mitigation chapter of the framework (CRE22), or the Cross-Product Netting Rules set forth CRE53.61 to CRE53.71 below [1]. The bank must have internal procedures to verify that, prior to recognising the effect of collateral in its calculations, the collateral meets the appropriate legal certainty standards as set out in CRE22 [1]. The bank must employ current market data to compute current exposures and at least three years of historical data must be used to estimate parameters of the model [1]. The bank must demonstrate, at least quarterly, that the stress period coincides with a period of increased CDS or other credit spreads for a representative selection of the bank's counterparties with traded credit spreads [1]. The bank must create several benchmark portfolios that are vulnerable to the same main risk factors to which the bank is exposed to evaluate the effectiveness of its stress calibration for Effective EPE [1].",
+     "sources": [
+      "[1] Basel CRE, CRE53.56 (in_force; eff. 2023-01-01)"
+     ],
+     "n_claims": 6,
+     "n_invalid": 0,
+     "n_weak": 0,
+     "config_hash": "qwen3:4b|answer_v3_json@30c7a8e59878a638|t0.0|ctx16384|floor0.0|facet6.0",
+     "claims": [
+      {
+       "text": "The bank must demonstrate that it meets the Committee's general criteria for banks seeking to make use of internal models to assess market risk exposures, but in the context of assessing counterparty credit risk.",
+       "citation": "Basel CRE, CRE53.56 (in_force; eff. 2023-01-01)",
+       "overlap": 1.0
+      },
+      {
+       "text": "The bank must have internal procedures to verify that, prior to including a transaction in a netting set, the transaction is covered by a legally enforceable netting contract that meets the applicable requirements of the standardised approach to counterparty credit risk (CRE52), the credit risk mitigation chapter of the framework (CRE22), or the Cross-Product Netting Rules set forth CRE53.61 to CRE53.71 below.",
+       "citation": "Basel CRE, CRE53.56 (in_force; eff. 2023-01-01)",
+       "overlap": 1.0
+      },
+      {
+       "text": "The bank must have internal procedures to verify that, prior to recognising the effect of collateral in its calculations, the collateral meets the appropriate legal certainty standards as set out in CRE22.",
+       "citation": "Basel CRE, CRE53.56 (in_force; eff. 2023-01-01)",
+       "overlap": 1.0
+      },
+      {
+       "text": "The bank must employ current market data to compute current exposures and at least three years of historical data must be used to estimate parameters of the model.",
+       "citation": "Basel CRE, CRE53.56 (in_force; eff. 2023-01-01)",
+       "overlap": 1.0
+      },
+      {
+       "text": "The bank must demonstrate, at least quarterly, that the stress period coincides with a period of increased CDS or other credit spreads for a representative selection of the bank's counterparties with traded credit spreads.",
+       "citation": "Basel CRE, CRE53.56 (in_force; eff. 2023-01-01)",
+       "overlap": 1.0
+      },
+      {
+       "text": "The bank must create several benchmark portfolios that are vulnerable to the same main risk factors to which the bank is exposed to evaluate the effectiveness of its stress calibration for Effective EPE.",
+       "citation": "Basel CRE, CRE53.56 (in_force; eff. 2023-01-01)",
+       "overlap": 1.0
+      }
+     ]
+    }
+   ],
+   "speed": {
+    "qwen3:1.7b": {
+     "prompt_tokens": 2379,
+     "read_s": 23.29,
+     "read_tok_s": 102.2
+    },
+    "qwen3:4b": {
+     "prompt_tokens": 2373,
+     "read_s": 70.01,
+     "read_tok_s": 33.9
+    }
+   }
+  },
+  {
+   "question": "Which paragraphs does the CAP standard cross-refer to when defining regulatory adjustments to CET1?",
+   "defect": "RE-LABELLED SCOPE \u2014 CAP30.18-30.31 is the TLAC/own-holdings range, quoted from CAP30.6 and CAP99.8, presented as the general CET1 cross-reference.",
+   "n_passages": 2,
+   "chars": 4629,
+   "runs": [
+    {
+     "model": "qwen3:1.7b",
+     "seconds": 31.6,
+     "refused": null,
+     "text": "CAP30.1 describes the regulatory adjustments to be applied to regulatory capital. The adjustments are applied in the calculation of Common Equity Tier 1 [1]. CAP30.18 to CAP30.31 cross-refer to when defining regulatory adjustments to CET1 [2].",
+     "sources": [
+      "[1] Basel CAP, CAP30.1 (in_force; eff. 2019-12-15)",
+      "[2] Basel CAP, CAP99.8 (in_force; eff. 2019-12-15)"
+     ],
+     "n_claims": 2,
+     "n_invalid": 0,
+     "n_weak": 1,
+     "config_hash": "qwen3:1.7b|answer_v3_json@30c7a8e59878a638|t0.0|ctx16384|floor0.0|facet6.0",
+     "claims": [
+      {
+       "text": "CAP30.1 describes the regulatory adjustments to be applied to regulatory capital. The adjustments are applied in the calculation of Common Equity Tier 1.",
+       "citation": "Basel CAP, CAP30.1 (in_force; eff. 2019-12-15)",
+       "overlap": 0.917
+      },
+      {
+       "text": "CAP30.18 to CAP30.31 cross-refer to when defining regulatory adjustments to CET1.",
+       "citation": "Basel CAP, CAP99.8 (in_force; eff. 2019-12-15)",
+       "overlap": 0.4
+      }
+     ]
+    },
+    {
+     "model": "qwen3:4b",
+     "seconds": 64.9,
+     "refused": null,
+     "text": "The regulatory adjustments to Common Equity Tier 1 (CET1) are defined in CAP30.1 [1]. CAP30.18 to CAP30.31 describe the regulatory adjustments applied to a bank's investments in its own capital or other total loss-absorbing capacity (TLAC) instruments [2].",
+     "sources": [
+      "[1] Basel CAP, CAP30.1 (in_force; eff. 2019-12-15)",
+      "[2] Basel CAP, CAP99.8 (in_force; eff. 2019-12-15)"
+     ],
+     "n_claims": 2,
+     "n_invalid": 0,
+     "n_weak": 0,
+     "config_hash": "qwen3:4b|answer_v3_json@30c7a8e59878a638|t0.0|ctx16384|floor0.0|facet6.0",
+     "claims": [
+      {
+       "text": "The regulatory adjustments to Common Equity Tier 1 (CET1) are defined in CAP30.1.",
+       "citation": "Basel CAP, CAP30.1 (in_force; eff. 2019-12-15)",
+       "overlap": 0.833
+      },
+      {
+       "text": "CAP30.18 to CAP30.31 describe the regulatory adjustments applied to a bank's investments in its own capital or other total loss-absorbing capacity (TLAC) instruments.",
+       "citation": "Basel CAP, CAP99.8 (in_force; eff. 2019-12-15)",
+       "overlap": 1.0
+      }
+     ]
+    }
+   ],
+   "speed": {
+    "qwen3:1.7b": {
+     "prompt_tokens": 1070,
+     "read_s": 19.09,
+     "read_tok_s": 56.0
+    },
+    "qwen3:4b": {
+     "prompt_tokens": 1064,
+     "read_s": 40.0,
+     "read_tok_s": 26.6
+    }
+   }
+  },
+  {
+   "question": "Under CRE, in which cases does the treatment differ for banks in jurisdictions that have not implemented the framework?",
+   "defect": "QUESTION AS PREMISE \u2014 'not implemented' appears nowhere in Basel CRE. The model restated the question and attached real CRE54/CRE20 citations. The honest answer is that CRE does not address this.",
+   "n_passages": 3,
+   "chars": 6304,
+   "runs": [
+    {
+     "model": "qwen3:1.7b",
+     "seconds": 30.7,
+     "refused": null,
+     "text": "The treatment differs for banks in jurisdictions that have not implemented the framework when the conditions set out in CRE54.14 and CRE54.15 are met, and the conditions in CRE54.16 are met [1]. The treatment differs for banks in jurisdictions that have not implemented the framework when the collateral is held by a custodian and is bankruptcy remote from the CCP [2].",
+     "sources": [
+      "[1] Basel CRE, CRE54.18 (in_force; eff. 2023-01-01)",
+      "[2] Basel CRE, CRE20.53 (in_force; eff. 2023-01-01)"
+     ],
+     "n_claims": 2,
+     "n_invalid": 0,
+     "n_weak": 1,
+     "config_hash": "qwen3:1.7b|answer_v3_json@30c7a8e59878a638|t0.0|ctx16384|floor0.0|facet6.0",
+     "claims": [
+      {
+       "text": "The treatment differs for banks in jurisdictions that have not implemented the framework when the conditions set out in CRE54.14 and CRE54.15 are met, and the conditions in CRE54.16 are met.",
+       "citation": "Basel CRE, CRE54.18 (in_force; eff. 2023-01-01)",
+       "overlap": 0.625
+      },
+      {
+       "text": "The treatment differs for banks in jurisdictions that have not implemented the framework when the collateral is held by a custodian and is bankruptcy remote from the CCP.",
+       "citation": "Basel CRE, CRE20.53 (in_force; eff. 2023-01-01)",
+       "overlap": 0.182
+      }
+     ]
+    },
+    {
+     "model": "qwen3:4b",
+     "seconds": 91.6,
+     "refused": null,
+     "text": "Banks in jurisdictions that have not implemented the framework must apply the risk weight of the clearing member to collateral exposures where conditions in CRE54.15 and CRE54.16 are not met [1]. For banks that are clients of clearing members, a 4% risk weight applies to collateral exposures if conditions in CRE54.16 are met, but a 2% risk weight applies if conditions in CRE54.14 and CRE54.15 are met [1]. The treatment of collateral posted by banks as clients of clearing members differs based on whether the collateral meets the conditions in CRE54.15 and CRE54.16, with specific risk weights applying in different scenarios [1].",
+     "sources": [
+      "[1] Basel CRE, CRE54.18 (in_force; eff. 2023-01-01)"
+     ],
+     "n_claims": 3,
+     "n_invalid": 0,
+     "n_weak": 0,
+     "config_hash": "qwen3:4b|answer_v3_json@30c7a8e59878a638|t0.0|ctx16384|floor0.0|facet6.0",
+     "claims": [
+      {
+       "text": "Banks in jurisdictions that have not implemented the framework must apply the risk weight of the clearing member to collateral exposures where conditions in CRE54.15 and CRE54.16 are not met.",
+       "citation": "Basel CRE, CRE54.18 (in_force; eff. 2023-01-01)",
+       "overlap": 0.833
+      },
+      {
+       "text": "For banks that are clients of clearing members, a 4% risk weight applies to collateral exposures if conditions in CRE54.16 are met, but a 2% risk weight applies if conditions in CRE54.14 and CRE54.15 are met.",
+       "citation": "Basel CRE, CRE54.18 (in_force; eff. 2023-01-01)",
+       "overlap": 1.0
+      },
+      {
+       "text": "The treatment of collateral posted by banks as clients of clearing members differs based on whether the collateral meets the conditions in CRE54.15 and CRE54.16, with specific risk weights applying in different scenarios.",
+       "citation": "Basel CRE, CRE54.18 (in_force; eff. 2023-01-01)",
+       "overlap": 0.684
+      }
+     ]
+    }
+   ],
+   "speed": {
+    "qwen3:1.7b": {
+     "prompt_tokens": 1483,
+     "read_s": 17.19,
+     "read_tok_s": 86.3
+    },
+    "qwen3:4b": {
+     "prompt_tokens": 1477,
+     "read_s": 42.93,
+     "read_tok_s": 34.4
+    }
+   }
+  },
+  {
+   "question": "Which asset classes fall under specialised lending?",
+   "defect": "LIST BOUNDARY \u2014 the five SL sub-classes are right, but the retail three and corporate purchased receivables/QRRE are SEPARATE asset classes, not part of specialised lending. Also cited CRE30.7 where the names are 30.8.",
+   "n_passages": 4,
+   "chars": 8351,
+   "runs": [
+    {
+     "model": "qwen3:1.7b",
+     "seconds": 34.9,
+     "refused": null,
+     "text": "Specialised lending includes project finance (PF), object finance (OF), commodities finance (CF), income-producing real estate (IPRE) lending, and high-volatility commercial real estate (HVCRE) lending [1].",
+     "sources": [
+      "[1] Basel CRE, CRE30.7 (in_force; eff. 2023-01-01)"
+     ],
+     "n_claims": 1,
+     "n_invalid": 0,
+     "n_weak": 0,
+     "config_hash": "qwen3:1.7b|answer_v3_json@30c7a8e59878a638|t0.0|ctx16384|floor0.0|facet6.0",
+     "claims": [
+      {
+       "text": "Specialised lending includes project finance (PF), object finance (OF), commodities finance (CF), income-producing real estate (IPRE) lending, and high-volatility commercial real estate (HVCRE) lending.",
+       "citation": "Basel CRE, CRE30.7 (in_force; eff. 2023-01-01)",
+       "overlap": 0.955
+      }
+     ]
+    },
+    {
+     "model": "qwen3:4b",
+     "seconds": 87.3,
+     "refused": null,
+     "text": "Specialised lending includes project finance, object finance, commodities finance, income-producing real estate lending, and high-volatility commercial real estate lending [1]. Specialised lending is a sub-class of the corporate asset class under the IRB approach [2].",
+     "sources": [
+      "[1] Basel CRE, CRE31.10 (in_force; eff. 2023-01-01)",
+      "[2] Basel CRE, CRE30.4 (in_force; eff. 2023-01-01)"
+     ],
+     "n_claims": 2,
+     "n_invalid": 0,
+     "n_weak": 0,
+     "config_hash": "qwen3:4b|answer_v3_json@30c7a8e59878a638|t0.0|ctx16384|floor0.0|facet6.0",
+     "claims": [
+      {
+       "text": "Specialised lending includes project finance, object finance, commodities finance, income-producing real estate lending, and high-volatility commercial real estate lending.",
+       "citation": "Basel CRE, CRE31.10 (in_force; eff. 2023-01-01)",
+       "overlap": 1.0
+      },
+      {
+       "text": "Specialised lending is a sub-class of the corporate asset class under the IRB approach.",
+       "citation": "Basel CRE, CRE30.4 (in_force; eff. 2023-01-01)",
+       "overlap": 1.0
+      }
+     ]
+    }
+   ],
+   "speed": {
+    "qwen3:1.7b": {
+     "prompt_tokens": 1883,
+     "read_s": 24.33,
+     "read_tok_s": 77.4
+    },
+    "qwen3:4b": {
+     "prompt_tokens": 1877,
+     "read_s": 61.03,
+     "read_tok_s": 30.8
+    }
+   }
+  },
+  {
+   "question": "How do Basel CAP and Basel RBC treat minimum capital ratios?",
+   "defect": "INVERTED MECHANISM \u2014 said banks must 'conserve earnings AS dividends, share buybacks or discretionary bonus payments'. Those are the distributions the conservation buffer RESTRICTS. Also missed CAP's actual minimums (CET1 4.5 / Tier 1 6 / Total 8).",
+   "n_passages": 4,
+   "chars": 9336,
+   "runs": [
+    {
+     "model": "qwen3:1.7b",
+     "seconds": 41.0,
+     "refused": null,
+     "text": "Basel CAP treats minimum capital ratios by requiring that common shares be deemed equivalent to capital instruments in terms of loss absorption and that banks preserve the quality of their instruments during periods of market stress [1]. Basel RBC sets minimum capital conservation ratios that banks must meet at various CET1 ratios, with the requirement that banks conserve a portion of their earnings as dividends, share buybacks, or discretionary bonus payments [2].",
+     "sources": [
+      "[1] Basel CAP, Footnotes (in_force; eff. 2019-12-15)",
+      "[2] Basel RBC, RBC30.4 (in_force; eff. 2019-12-15)"
+     ],
+     "n_claims": 2,
+     "n_invalid": 0,
+     "n_weak": 0,
+     "config_hash": "qwen3:1.7b|answer_v3_json@30c7a8e59878a638|t0.0|ctx16384|floor0.0|facet6.0",
+     "claims": [
+      {
+       "text": "Basel CAP treats minimum capital ratios by requiring that common shares be deemed equivalent to capital instruments in terms of loss absorption and that banks preserve the quality of their instruments during periods of market stress.",
+       "citation": "Basel CAP, Footnotes (in_force; eff. 2019-12-15)",
+       "overlap": 0.955
+      },
+      {
+       "text": "Basel RBC sets minimum capital conservation ratios that banks must meet at various CET1 ratios, with the requirement that banks conserve a portion of their earnings as dividends, share buybacks, or discretionary bonus payments.",
+       "citation": "Basel RBC, RBC30.4 (in_force; eff. 2019-12-15)",
+       "overlap": 0.905
+      }
+     ]
+    },
+    {
+     "model": "qwen3:4b",
+     "seconds": 121.0,
+     "refused": null,
+     "text": "Basel CAP defines joint stock companies as those that have issued common shares, irrespective of whether these shares are held privately or publicly, and states that these represent the vast majority of internationally active banks [1]. Basel RBC requires that capital conservation buffers be recalculated at each distribution date to determine the minimum capital conservation ratios a bank must meet at various levels of CET1 capital ratios [2]. Basel RBC specifies that the capital conservation buffer must be capable of being drawn down, but banks should not choose to operate in the buffer range in normal times to compete with other banks and win market share [3]. Basel CAP states that capital instruments with a permanent writedown feature still meet the criterion for common shares [1].",
+     "sources": [
+      "[1] Basel CAP, Footnotes (in_force; eff. 2019-12-15)",
+      "[2] Basel RBC, RBC30.4 (in_force; eff. 2019-12-15)",
+      "[3] Basel RBC, FAQ1 (in_force; eff. 2019-12-15)"
+     ],
+     "n_claims": 4,
+     "n_invalid": 0,
+     "n_weak": 0,
+     "config_hash": "qwen3:4b|answer_v3_json@30c7a8e59878a638|t0.0|ctx16384|floor0.0|facet6.0",
+     "claims": [
+      {
+       "text": "Basel CAP defines joint stock companies as those that have issued common shares, irrespective of whether these shares are held privately or publicly, and states that these represent the vast majority of internationally active banks.",
+       "citation": "Basel CAP, Footnotes (in_force; eff. 2019-12-15)",
+       "overlap": 0.857
+      },
+      {
+       "text": "Basel RBC requires that capital conservation buffers be recalculated at each distribution date to determine the minimum capital conservation ratios a bank must meet at various levels of CET1 capital ratios.",
+       "citation": "Basel RBC, RBC30.4 (in_force; eff. 2019-12-15)",
+       "overlap": 0.842
+      },
+      {
+       "text": "Basel RBC specifies that the capital conservation buffer must be capable of being drawn down, but banks should not choose to operate in the buffer range in normal times to compete with other banks and win market share.",
+       "citation": "Basel RBC, FAQ1 (in_force; eff. 2019-12-15)",
+       "overlap": 0.95
+      },
+      {
+       "text": "Basel CAP states that capital instruments with a permanent writedown feature still meet the criterion for common shares.",
+       "citation": "Basel CAP, Footnotes (in_force; eff. 2019-12-15)",
+       "overlap": 0.917
+      }
+     ]
+    }
+   ],
+   "speed": {
+    "qwen3:1.7b": {
+     "prompt_tokens": 2067,
+     "read_s": 26.81,
+     "read_tok_s": 77.1
+    },
+    "qwen3:4b": {
+     "prompt_tokens": 2061,
+     "read_s": 69.17,
+     "read_tok_s": 29.8
+    }
+   }
+  }
+ ]
+}

@@ -16,6 +16,19 @@ dependencies = [
     "pydantic>=2.13,<3",
     "pydantic-settings>=2.14,<3",
     "pyyaml>=6.0.3,<7",
+    # generation/llm.py talks to Ollama over raw HTTP. langchain pulls
+    # requests in transitively today; declared so a langchain bump that
+    # drops it does not break generation with an unrelated-looking error.
+    "requests>=2.32,<3",
+    # ------------------------------------------------------------------------
+    # --- observability (Stage 10) -------------------------------------------
+    # CLIENT side only. The Phoenix SERVER runs in docker-compose. This package
+    # is the OTel tracer plus the OTLP exporter that ships spans to it, and it
+    # supplies start_as_current_span(..., openinference_span_kind="retriever"),
+    # which is what makes Phoenix render a retrieval view instead of a text
+    # blob. Nothing in regrag/ may import it at module scope - see
+    # regrag/observability/tracing.py when it exists.
+    "arize-phoenix-otel>=0.16,<1",
     # ------------------------------------------------------------------------
     "docling>=2.113.0",
     "langchain>=0.3,<0.4",
@@ -31,6 +44,8 @@ dependencies = [
     "rank-bm25>=0.2.2",
     "sentence-transformers>=5.6.0",
     "streamlit>=1.59.2",
+    "fastapi>=0.141.1",
+    "uvicorn>=0.51.0",
 ]
 
 [dependency-groups]
@@ -42,3 +57,7 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["regrag"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = [".ipynb_checkpoints", ".venv", "qdrant_storage", "data"]
