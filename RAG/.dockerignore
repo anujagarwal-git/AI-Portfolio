@@ -1,0 +1,17 @@
+# ALLOW-LIST: everything is excluded, then only what the app needs is let back in.
+# (The Docker build context is the RAG folder, NOT git - so PDFs are available here
+# even though .gitignore keeps them out of the repo.)
+*
+!pyproject.toml
+!uv.lock
+!.python-version
+!regrag/
+!api/
+!ui/
+!prompts/
+!scripts/ask.py
+!data/registry.yaml
+!data/index/
+!data/**/*.pdf
+**/__pycache__
+**/*.pyc

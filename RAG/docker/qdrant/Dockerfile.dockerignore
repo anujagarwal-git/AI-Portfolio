@@ -1,0 +1,3 @@
+# Context is ./qdrant_storage - send only the one collection the image needs.
+*
+!collections/regrag_parentdoc_v1/

@@ -1,0 +1,48 @@
+# =============================================================================
+# TESTER SETUP - pulls ready-made images, builds nothing.
+#   docker compose -f docker-compose.demo.yml up
+#   then open http://localhost:8501
+# =============================================================================
+name: regrag-demo
+
+services:
+  qdrant:
+    image: ghcr.io/anujagarwal-git/regrag-qdrant:1.0
+    restart: unless-stopped
+    # no host port: only the api talks to it
+
+  ollama:
+    image: ghcr.io/anujagarwal-git/regrag-ollama:1.0
+    restart: unless-stopped
+
+  phoenix:
+    # TODO pin the tag (open item since 2026-09-11)
+    image: arizephoenix/phoenix:latest
+    ports:
+      - "6006:6006"
+    restart: unless-stopped
+
+  api:
+    image: ghcr.io/anujagarwal-git/regrag-app:1.0
+    environment:
+      - REGRAG_QDRANT_URL=http://qdrant:6333
+      - REGRAG_OLLAMA_HOST=http://ollama:11434
+      - REGRAG_PHOENIX_URL=http://phoenix:6006
+      - PHOENIX_COLLECTOR_ENDPOINT=http://phoenix:6006
+      - REGRAG_TRACE=1
+    ports:
+      - "8000:8000"
+    depends_on: [qdrant, ollama, phoenix]
+    restart: unless-stopped
+
+  ui:
+    image: ghcr.io/anujagarwal-git/regrag-app:1.0
+    command: ["streamlit", "run", "ui/streamlit_app.py",
+              "--server.address", "0.0.0.0", "--server.port", "8501",
+              "--server.headless", "true"]
+    environment:
+      - REGRAG_API_URL=http://api:8000
+    ports:
+      - "8501:8501"
+    depends_on: [api]
+    restart: unless-stopped

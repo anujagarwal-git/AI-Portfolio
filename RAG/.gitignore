@@ -74,3 +74,6 @@ notebooks/Prototype/*Copy*.ipynb
 
 # Stage 10 - audit log, machine-local
 logs/
+
+# --- Docker build input: Qdrant snapshot, ~586 MB, never in git ----------
+docker/qdrant/*.snapshot

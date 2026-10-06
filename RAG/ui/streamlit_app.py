@@ -18,12 +18,15 @@ WHY POLLING LOOKS LIKE THIS
 """
 from __future__ import annotations
 
+import os
 import time
 
 import requests
 import streamlit as st
 
-API = "http://localhost:8000"
+# Read from the environment so Docker can point the UI at the API container
+# (REGRAG_API_URL=http://api:8000); local runs keep the localhost default.
+API = os.getenv("REGRAG_API_URL", "http://localhost:8000")
 POLL_SECONDS = 2
 GIVE_UP_AFTER = 600          # 10 min. CPU generation is slow, not infinite.
 

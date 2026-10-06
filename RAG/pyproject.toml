@@ -46,6 +46,14 @@ dependencies = [
     "streamlit>=1.59.2",
     "fastapi>=0.141.1",
     "uvicorn>=0.51.0",
+    # --- CPU-only PyTorch (2026-10-03, for the Docker image) -----------------
+    # Not imported by regrag directly: sentence-transformers and Docling pull it
+    # in. Declared here ONLY so [tool.uv.sources] below can route it to the CPU
+    # index - uv applies sources to direct dependencies only. Without this, a
+    # Linux install pulls the CUDA build (nvidia-* packages, several GB) that a
+    # CPU-only project never uses. Versions match what uv.lock already had.
+    "torch>=2.13,<2.14",
+    "torchvision>=0.28,<0.29",
 ]
 
 [dependency-groups]
@@ -61,3 +69,16 @@ packages = ["regrag"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 norecursedirs = [".ipynb_checkpoints", ".venv", "qdrant_storage", "data"]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+torchvision = [
+  { index = "pytorch-cpu", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

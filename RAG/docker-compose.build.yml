@@ -1,0 +1,21 @@
+# =============================================================================
+# BUILD OVERLAY - for you only. Adds `build:` to the demo services.
+#   docker compose -f docker-compose.demo.yml -f docker-compose.build.yml build
+#   docker compose -f docker-compose.demo.yml -f docker-compose.build.yml push
+# Base-image tags pinned to the versions you run locally (2026-10-03).
+# =============================================================================
+services:
+  qdrant:
+    build:
+      context: ./qdrant_storage
+      dockerfile: ../docker/qdrant/Dockerfile
+      args:
+        QDRANT_TAG: "v1.18.3"   # = your local Qdrant that made the snapshot
+  ollama:
+    build:
+      context: ./docker/ollama
+      args:
+        OLLAMA_TAG: "0.34.1"    # = your local Ollama
+  api:
+    build:
+      context: .
