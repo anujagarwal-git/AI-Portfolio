@@ -36,49 +36,6 @@ PROBE = ("Context: \"Model validation verifies that models perform as "
          "months.\"\nCan the statement be attributed to the context? "
          "Answer yes or no.")
 
-
-# WHAT EACH CONFIGURATION HAS ACTUALLY SCORED, so the choice is evidence.
-#
-#   judge                 think  faithfulness        context_recall
-#   qwen2.5:3b-instruct   n/a    PASS 1.0 / 0.0      FAIL  R3 = 1.000
-#   qwen3:8b              ON     timeout, all NaN    WORKED gs-02 = 0.00
-#   qwen3:4b              OFF    FAIL R1 = 0.000     FAIL  R3 = 1.000
-#   qwen3:4b              ON     timed out on Q1     timed out on Q1
-#   qwen2.5:7b-instruct   n/a    PASS 1.000/0.333    PASS R1 1.0, R3 0.0  <- USE THIS
-#
-# qwen2.5:7b-instruct PASSED ALL THREE CONDITIONS (2026-09-08), and every
-# cell is right, not just the separations: R2's 0.333 is 1 of 3 claims
-# supported - it counted the two fabricated figures rather than flagging
-# the row binary. That is the strongest single signal in this table.
-#
-# SO THE 'RECALL NEEDS REASONING' HYPOTHESIS IS DISPROVED, not sidestepped.
-# A model with no reasoning phase at all does attribution correctly at 7b.
-# What recall needed was CAPACITY. Every earlier failure - 3b, 4b - was a
-# size problem wearing a thinking problem's clothes, and the mentor read it
-# the wrong way round twice.
-#
-# REASONING JUDGES ARE OFF THE TABLE (Anuj, 2026-09-08). Thinking ON times out
-# even at 4b; thinking OFF breaks both metrics. So the judge must be a model
-# that is capable WITHOUT a reasoning phase - which is what qwen2.5 is. The 3b
-# of that family already passed faithfulness cleanly, so the open question is
-# only whether 7b has the capacity for attribution that 3b lacked.
-#
-# NOTE WHAT IS STILL UNISOLATED: those rows differ in SIZE and in THINKING at
-# once. "Recall needs reasoning" was a hypothesis and it is now MOOT rather
-# than disproved - the reasoning path was abandoned on cost, not on evidence.
-# If qwen2.5:7b passes, that hypothesis was simply wrong, and the honest
-# reading is that recall needed CAPACITY, not a reasoning phase.
-
-
-# *** THE JUDGE'S CONTEXT WINDOW ***
-# `ollama ps` showed CONTEXT 4096 while golden-set contexts reach ~20,000
-# characters (~5,000 tokens) BEFORE the metric's own prompt scaffolding. A
-# judge whose window silently truncates the context it is grading would score
-# recall against a fragment and report a LOW number for a retrieval that
-# actually worked - a false negative that looks exactly like a real miss.
-# 32,768 is qwen2.5:7b's native window. The generator runs 16,384 by its own
-# config; the judge needs more because it reads the context AND the answer AND
-# the reference AND the rubric in one prompt.
 JUDGE_NUM_CTX = 32_768
 
 
