@@ -1,0 +1,928 @@
+{
+ "run": "20261006T134338Z",
+ "results": [
+  {
+   "id": "gs-11s",
+   "question": "Under SR 11-7, what are the core elements of an effective validation framework, and how does SS1/23 Principle 4 break down model validation?",
+   "reference_answer": "SR 11-7 sets three core elements of an effective validation framework: evaluation of conceptual soundness, including developmental evidence; ongoing monitoring, including process verification and benchmarking; and outcomes analysis, including back-testing. SS1/23 Principle 4 (independent model validation) requires a validation process that provides ongoing, independent and effective challenge, and breaks it into five sub-principles: 4.1 the independent validation function, 4.2 independent review, 4.3 process verification, 4.4 model performance monitoring, and 4.5 periodic revalidation.",
+   "expected_docs": [
+    "SR 11-7",
+    "SS1/23"
+   ],
+   "scenario": "comparison",
+   "plan_expected": "document_fanout",
+   "source_note": "Specific rewording of gs-11 (2026-10-06). SR 11-7 'Key Elements of Comprehensive Validation'; SS1/23 Principle 4 and 4.1-4.5 headings, verified in source.",
+   "expected_strings": [
+    "conceptual soundness",
+    "periodic revalidation"
+   ],
+   "answer": "An effective validation framework under SR 11-7 should include three core elements: evaluation of conceptual soundness, including developmental evidence; ongoing monitoring, including process verification and benchmarking; and outcomes analysis, including back-testing [1]. SS1/23 Principle 4 -Independent model validation outlines that firms should have a validation process providing ongoing, independent, and effective challenge to model development and use. The individual or body responsible for model approval must ensure validation recommendations for remediation or redevelopment are actioned to make models suitable for their intended purpose [2].",
+   "contexts": [
+    "Key Elements of Comprehensive Validation\n\nAn effective validation framework should include three core elements:\n\n· Evaluation of conceptual soundness, including developmental evidence\n\n· Ongoing monitoring, including process verification and benchmarking\n\n· Outcomes analysis, including back-testing",
+    "Principle 4 -Independent model validation\n\nFirms should have a validation process that provides ongoing, independent, and effective challenge to model development and use. The individual/body within a firm responsible for the approval of a model should ensure that validation recommendations for remediation or redevelopment are actioned so that models are suitable for their intended purpose.",
+    "Principle 4 -Independent model validation\n\nFirms should have a validation process that provides ongoing, independent, and effective challenge to model development and use. The individual or body within a firm responsible for the approval of a model should ensure that validation recommendations for remediation or redevelopment are actioned so that models are suitable for their intended purpose."
+   ],
+   "docs": [
+    "SR 11-7",
+    "SS1/23",
+    "SS1/23"
+   ],
+   "locators": [
+    "sr-11-7-2011::doc::0011",
+    "pra-ss1-23-2023::doc::0042",
+    "pra-ss1-23-2023::doc::0017"
+   ],
+   "hits": [
+    [
+     {
+      "locator": "Key Elements of Comprehensive Validation",
+      "facet": "SR 11-7",
+      "dense_rank": 0,
+      "lexical_rank": 0,
+      "rrf": 0.032787,
+      "rerank": 2.9931411743164062
+     }
+    ],
+    [
+     {
+      "locator": "Principle 4 -Independent model validation",
+      "facet": "SS1/23",
+      "dense_rank": 6,
+      "lexical_rank": 2,
+      "rrf": 0.030798,
+      "rerank": 0.1242411881685257
+     }
+    ],
+    [
+     {
+      "locator": "Principle 4 -Independent model validation",
+      "facet": "SS1/23",
+      "dense_rank": 7,
+      "lexical_rank": 3,
+      "rrf": 0.030331,
+      "rerank": 0.12549421191215515
+     }
+    ]
+   ],
+   "claims": [
+    {
+     "text": "An effective validation framework under SR 11-7 should include three core elements: evaluation of conceptual soundness, including developmental evidence; ongoing monitoring, including process verification and benchmarking; and outcomes analysis, including back-testing.",
+     "label": "S1",
+     "citation": "SR 11-7, Key Elements of Comprehensive Validation (superseded; eff. 2011-04-04)",
+     "locator": "Key Elements of Comprehensive Validation",
+     "overlap": 1.0,
+     "align_verdict": "FLOOR"
+    },
+    {
+     "text": "SS1/23 Principle 4 -Independent model validation outlines that firms should have a validation process providing ongoing, independent, and effective challenge to model development and use. The individual or body responsible for model approval must ensure validation recommendations for remediation or redevelopment are actioned to make models suitable for their intended purpose.",
+     "label": "S2",
+     "citation": "SS1/23, Principle 4 -Independent model validation (in_force; eff. 2024-05-17)",
+     "locator": "Principle 4 -Independent model validation",
+     "overlap": 0.903,
+     "align_verdict": "FLOOR"
+    }
+   ],
+   "labels": [
+    "S1",
+    "S2",
+    "S3"
+   ],
+   "unit_locators": [
+    [
+     "Key Elements of Comprehensive Validation"
+    ],
+    [
+     "Principle 4 -Independent model validation"
+    ],
+    [
+     "Principle 4 -Independent model validation"
+    ]
+   ],
+   "plan_actual": "document_fanout",
+   "gate_decision": "ANSWERABLE",
+   "gate_reason": "question names SR 11-7, SS1/23 — no gate needed",
+   "refused": false,
+   "refusal_reason": "",
+   "config_hash": "qwen3:1.7b|answer_v3_json@6ebc4ed85c45f7d4|t0.0|ctx16384|floor0.0|facet6.0|renderv2|align0.65/0.05",
+   "n_claims": 2,
+   "n_invalid": 0,
+   "error": "",
+   "seconds": 41.8
+  },
+  {
+   "id": "gs-12s-a",
+   "question": "Under Basel RBC, what are the minimum CET1, Tier 1 and Total capital ratios required?",
+   "reference_answer": "Banks must meet the following requirements at all times: Common Equity Tier 1 must be at least 4.5% of risk-weighted assets, Tier 1 capital must be at least 6% of risk-weighted assets, and Total capital must be at least 8.0% of risk-weighted assets.",
+   "expected_docs": [
+    "Basel RBC"
+   ],
+   "scenario": "direct",
+   "plan_expected": "single_document",
+   "source_note": "Specific rewording of gs-12, RBC half (2026-10-06). RBC20.1, verified in source.",
+   "expected_strings": [
+    "4.5%",
+    "6%",
+    "8.0%"
+   ],
+   "answer": "The minimum CET1 capital ratio under Basel RBC is 5.125% [1]. The minimum Tier 1 capital ratio under Basel RBC is 6% [1]. The minimum Total capital ratio under Basel RBC is 8% [1].",
+   "contexts": [
+    "Footnotes\n\n1 Common Equity Tier 1 must first be used to meet the minimum capital and total lossabsorbing capacity (TLAC) requirements if necessary (including the 6% Tier 1, 8% Total capital requirements), before the remainder can contribute to the capital conservation buffer.\n\n30.3 The distribution constraints imposed on banks when their capital levels fall into the range increase as the banks' capital levels approach the minimum requirements. By design, the constraints imposed on banks with capital levels at the top of the range would be minimal. This reflects an expectation that banks' capital levels will from time to time fall into this range. The Basel Committee does not wish to impose constraints for entering the range that would be so restrictive as to result in the range being viewed as establishing a new minimum capital requirement.\n\n30.4 The table below shows the minimum capital conservation ratios a bank must meet at various levels of CET1 capital ratios. The applicable conservation standards must be recalculated at each distribution date. For example, a bank with a CET1 capital ratio in the range of 5.125% to 5.75% is required to conserve 80% of its earnings in the subsequent payment period (ie pay out no more than 20% in terms of dividends, share buybacks and discretionary bonus payments). If the bank wants to make payments in excess of the constraints imposed by this regime, it would have the option of raising capital in the private sector equal to the amount above the constraint which it wishes to distribute. This would be discussed with the bank's supervisor as part of the capital planning process. The CET1 ratio includes amounts used to meet the 4.5% minimum CET1 requirement, but excludes any additional CET1 needed to meet the 6% Tier 1 and 8% Total Capital requirements, and also excludes any CET1 needed to meet the total loss-absorbing capacity (TLAC) requirement. For example, a bank with 8% CET1 and no Additional Tier 1 or Tier 2 capital, that has 10% of non-regulatory-capital TLAC instruments, would meet its minimum risk-based capital and risk-based TLAC requirements, but would have a zero conservation buffer and therefore be subject to the 100% constraint on capital distributions.",
+    "FAQ1\n\nRBC30.4 shows the minimum capital conservation ratios a bank must meet at various CET1 ratios. RBC30.5(4) states that the capital conservation buffer 'must be capable of being drawn down', but that 'banks should not choose in normal times to operate in the buffer range simply to compete with other banks and win market share'. Are the following interpretations correct, despite implying some discontinuities in the levels of capital conservation? (a) A non-global systemically important bank (G-SIB) with a CET1 ratio between 5.125% and 5.75% may distribute up to 20% of its earnings, provided that in doing so its CET1 ratio does not fall below 5.125%, ie a bank may only fall into the final quartile of the capital conservation buffer as a result of making losses, rather than distributions. (b) A non-G-SIB with a 10.51% CET1 ratio and no Additional Tier 1 and Tier 2 capital (ie meeting minimum capital and buffer requirements solely with CET1) may make distributions equivalent to only 0.01% of risk-weighted assets (RWA), while a bank with a CET1 ratio of 10.45% (and no Additional Tier 1 and Tier 2 capital) may distribute up to 60% of its earnings, providing its CET1 ratio does not fall into the next quartile of the buffer.\n\nThe limits on distributions set out in the Basel III buffers framework are not intended to operate as set out in interpretations (a) and (b). As stated in RBC30.3, capital buffers are not intended to be viewed as a minimum capital requirement. By design, the constraints imposed on banks with capital levels at the top of the range are minimal and the Committee expects that banks' capital levels will, where necessary, be allowed to fall into the buffer range. The capital conservation ratios set out in RBC30.4 need only take into account the current CET1 ratio of a bank (ie before the next distribution is made). Nonetheless, banks should discuss proposed distributions with their supervisors, who will consider these in the light of banks' capital plans to rebuild buffers over an appropriate timeframe (as anticipated in RBC30.5(4)).\n\nIt should be noted that Basel standards constitute minimum requirements and jurisdictions may decide to apply a more conservative treatment.",
+    "Extension of the capital conservation buffer\n\n30.16 The countercyclical buffer requirement to which a bank is subject is implemented through an extension of the capital conservation buffer described in RBC30.1 to RBC30.5.\n\n30.17 The table below shows the minimum capital conservation ratios a bank must meet at various levels of the CET1 capital ratio. 6 When the countercyclical capital buffer is zero in all of the regions to which a bank has private sector credit exposures, the capital levels and"
+   ],
+   "docs": [
+    "Basel RBC",
+    "Basel RBC",
+    "Basel RBC"
+   ],
+   "locators": [
+    "bcbs-rbc-consolidated::RBC30::0004",
+    "bcbs-rbc-consolidated::RBC30::0006",
+    "bcbs-rbc-consolidated::RBC30::0013"
+   ],
+   "hits": [
+    [
+     {
+      "locator": "RBC30.4",
+      "facet": "Basel RBC",
+      "dense_rank": 0,
+      "lexical_rank": 1,
+      "rrf": 0.032522,
+      "rerank": 4.924986839294434
+     },
+     {
+      "locator": "Footnotes",
+      "facet": "Basel RBC",
+      "dense_rank": 5,
+      "lexical_rank": 3,
+      "rrf": 0.030777,
+      "rerank": 1.3556716442108154
+     }
+    ],
+    [
+     {
+      "locator": "FAQ1",
+      "facet": "Basel RBC",
+      "dense_rank": 1,
+      "lexical_rank": 2,
+      "rrf": 0.032002,
+      "rerank": 3.4817628860473633
+     },
+     {
+      "locator": "FAQ1",
+      "facet": "Basel RBC",
+      "dense_rank": 2,
+      "lexical_rank": 7,
+      "rrf": 0.030579,
+      "rerank": 3.866206169128418
+     }
+    ],
+    [
+     {
+      "locator": "RBC30.17",
+      "facet": "Basel RBC",
+      "dense_rank": 3,
+      "lexical_rank": 4,
+      "rrf": 0.03101,
+      "rerank": 2.5374693870544434
+     }
+    ]
+   ],
+   "claims": [
+    {
+     "text": "The minimum CET1 capital ratio under Basel RBC is 5.125%.",
+     "label": "S1",
+     "citation": "Basel RBC, RBC30.4 (in_force; eff. 2019-12-15)",
+     "locator": "RBC30.4",
+     "overlap": 1.0,
+     "align_verdict": "FLOOR"
+    },
+    {
+     "text": "The minimum Tier 1 capital ratio under Basel RBC is 6%.",
+     "label": "S1",
+     "citation": "Basel RBC, RBC30.4 (in_force; eff. 2019-12-15)",
+     "locator": "RBC30.4",
+     "overlap": 1.0,
+     "align_verdict": "FLOOR"
+    },
+    {
+     "text": "The minimum Total capital ratio under Basel RBC is 8%.",
+     "label": "S1",
+     "citation": "Basel RBC, RBC30.4 (in_force; eff. 2019-12-15)",
+     "locator": "RBC30.4",
+     "overlap": 1.0,
+     "align_verdict": "FLOOR"
+    }
+   ],
+   "labels": [
+    "S1",
+    "S2",
+    "S3"
+   ],
+   "unit_locators": [
+    [
+     "",
+     "RBC30.3",
+     "RBC30.4"
+    ],
+    [
+     "FAQ1",
+     "FAQ1"
+    ],
+    [
+     "",
+     "RBC30.16",
+     "RBC30.17"
+    ]
+   ],
+   "plan_actual": "single_document",
+   "gate_decision": "ANSWERABLE",
+   "gate_reason": "question names Basel RBC — no gate needed",
+   "refused": false,
+   "refusal_reason": "",
+   "config_hash": "qwen3:1.7b|answer_v3_json@6ebc4ed85c45f7d4|t0.0|ctx16384|floor0.0|facet6.0|renderv2|align0.65/0.05",
+   "n_claims": 3,
+   "n_invalid": 0,
+   "error": "",
+   "seconds": 19.9
+  },
+  {
+   "id": "gs-12s-b",
+   "question": "Under Basel LEX, what is the large exposure limit as a share of Tier 1 capital?",
+   "reference_answer": "The sum of all exposure values of a bank to a single counterparty or to a group of connected counterparties must not be higher than 25% of the bank's Tier 1 capital at all times. This figure is set at 15% for a global systemically important bank's (G-SIB's) exposures to another G-SIB.",
+   "expected_docs": [
+    "Basel LEX"
+   ],
+   "scenario": "direct",
+   "plan_expected": "single_document",
+   "source_note": "Specific rewording of gs-12, LEX half (2026-10-06). LEX20.1 and LEX40.1, verified in source.",
+   "expected_strings": [
+    "25%",
+    "15%"
+   ],
+   "answer": "The large exposure limit as a share of Tier 1 capital is 15% for a global systemically important bank's (G-SIB)'s exposure to another G-SIB [1]. For non-G-SIBs, the large exposure limit as a share of Tier 1 capital is 25% [2].",
+   "contexts": [
+    "Version effective as of 15 Dec 2019\n\nFirst version in the format of the consolidated framework.\n\n40.1 The large exposure limit applied to a global systemically important bank's (G-SIB's) exposure to another G-SIB is set at 15% of Tier 1 capital. The limit applies to G-SIBs as identified by the Basel Committee (see SCO40) and published annually by the Financial Stability Board (FSB). When a bank becomes a G-SIB, it and other G-SIBs must apply the 15% limit within 12 months of this event, which is the same time frame within which a bank that has become a G-SIB would need to satisfy its higher loss absorbency requirement (see RBC40.6).\n\n40.2 Member countries are at liberty to set more stringent standards, as with any other standards approved by the Committee. In particular, the concern about contagion that has led the Committee to propose a relatively tighter limit on exposures between G-SIBs applies, in principle, at the jurisdictional level to domestic systemically important banks (DSIBs). The Committee therefore encourages jurisdictions to consider applying stricter limits to exposures between D-SIBs and to exposures of smaller banks to G-SIBs. The same logic would also be valid for the application of tighter limits to exposures to non-bank global systemically important financial institutions, and such a limit might be considered by the Committee in the future.\n\n40.3 The assessment of the systemic importance of G-SIBs is made using data that relate to the consolidated group (see SCO40.5) and, consistent with this, the additional loss absorbency requirement will apply to the consolidated group. But, consistent with the additional loss absorbency requirement for G-SIBs, the application of the relatively tighter limit on exposures between G-SIBs at the consolidated level does not rule out the option for host jurisdictions of subsidiaries of a group that is identified as a G-SIB to also apply the limit at the individual legal entity or consolidated level within their jurisdiction, ie to impose the 15% limit on the subsidiaries' exposures to other G-SIBs (defined at the individual legal entity or consolidated level within their jurisdiction).",
+    "Definition of a large exposure\n\n10.8 The sum of all exposure values of a bank to a counterparty or to a group of connected counterparties, as defined in LEX10.9 to LEX10.18, must be defined as a large exposure if it is equal to or above 10% of the bank's Tier 1 capital (as defined in CAP10.2). The exposure values must be measured as specified in LEX30.",
+    "Exposures to central counterparties\n\n30.54 Banks' exposures to qualifying central counterparties (QCCPs) 12 related to clearing activities are exempted from the large exposures framework. However, these exposures are subject to the regulatory reporting requirements as defined in LEX20.4. Footnotes\n\n12\n\nThe definition of QCCP for large exposures purposes is the same as that used for risk-based capital requirement purposes. A QCCP is an entity that is licensed to operate as a central counterparty (CCP) (including a license granted by way of confirming an exemption), and is permitted by the appropriate regulator/overseer to operate as such with respect to the products offered. This is subject to the provision that the CCP is based and prudentially supervised in a jurisdiction where the relevant regulator/overseer has established, and publicly indicated that it applies to the CCP on an ongoing basis, domestic rules and regulations that are consistent with the Committee on Payment and Financial Infrastructure and International Organization of Securities Commissions' Principles for Financial Market Infrastructures.\n\n30.55 In the case of non-QCCPs, banks must measure their exposure as a sum of both the clearing exposures described in LEX30.57 and the non-clearing exposures described in LEX30.59, and must respect the general large exposure limit of 25% of the Tier 1 capital.\n\n30.56 The concept of connected counterparties described in LEX10.9 to LEX10.18 does not apply in the context of exposure to central counterparties (CCPs) that are specifically related to clearing activities. FAQ\n\nFAQ1 Could you explain how to aggregate exposures to a CCP when the bank has both exposures related to clearing and exposures unrelated to clearing towards the CCP with an example?\n\nAccording to LEX30.56 clearing exposures to CCPs are not subject to the concept of connected counterparties described in LEX10.9 to LEX10.18, whereas non-clearing exposures are subject to the concept. Therefore, banks must separately measure and report to their supervisors clearing and non-clearing exposures to CCPs and, for the latter, to check whether the CCP is connected to other counterparties by meeting either the control relationship or the economic interdependence criteria.\n\nAs an example, if a bank has exposures to a QCCP for a total of 100 made up of 50\n\ntrade exposures, 10 default fund contribution and 40 liquidity line, it should report 60 under exposures related to clearing. For the other 40, it should check whether the QCCP is connected to other of its counterparties, including other CCPs. Assuming that the QCCP is also part of a group of connected counterparties, the bank would have to add this 40 from liquidity line to other exposures to counterparties in the same group. The sum of these exposures will be subject to the 25% large exposure limit.\n\n30.57 Banks must identify exposures to a CCP related to clearing activities and sum together these exposures. Exposures related to clearing activities are listed in the table below together with the exposure value to be used:\n\nExposures related to clearing activities Table 1\n\nType of exposure Exposure value\n\nTrade exposures The exposure value of trade exposures must be calculated using the exposure measures prescribed in other parts of this framework for the respective type of exposures (eg using the SA-CCR for derivative exposures).\n\nSegregated initial margin The exposure value is zero. 13\n\nNon-segregated initial margin The exposure value is the nominal amount of initial margin posted.\n\nPre-funded default fund contributions Nominal amount of the funded contribution. 14\n\nUnfunded default fund contributions The exposure value is zero.\n\nEquity stakes The exposure value is the nominal amount. 15",
+    "Minimum requirement - the large exposure limit\n\n20.1 The sum of all the exposure values of a bank to a single counterparty or to a group of connected counterparties must not be higher than 25% of the bank's Tier 1 capital at all times. However, as explained in LEX40, this figure is set at 15% for a global systemically important bank's (G-SIB's) exposures to another G\u0000SIB.\n\n20.2 The exposures must be measured as specified in LEX30. Tier 1 capital for the purpose of the large exposures framework is the Tier 1 capital defined in CAP10.2.\n\n20.3 Breaches of the limit, which must remain the exception, must be communicated immediately to the supervisor and must be rapidly rectified.",
+    "General measurement principles\n\n30.1 The exposure values a bank must consider in order to identify large exposures to a counterparty are all those exposures defined under the risk-based capital framework. It must consider both on- and off-balance sheet exposures included in either the banking or trading book and instruments with counterparty credit risk under the risk-based capital framework.\n\n30.2 An exposure amount to a counterparty that is deducted from capital must not be added to other exposures to that counterparty for the purpose of the large exposure limit. 1 Footnotes\n\n1 This general approach does not apply where an exposure is 1,250% risk-weighted. When this is the case, this exposure must be added to any other exposures to the same counterparty and the sum is subject to the large exposure limit, except if this exposure is specifically exempted for other reasons."
+   ],
+   "docs": [
+    "Basel LEX",
+    "Basel LEX",
+    "Basel LEX",
+    "Basel LEX",
+    "Basel LEX"
+   ],
+   "locators": [
+    "bcbs-lex-consolidated::LEX40::0002",
+    "bcbs-lex-consolidated::LEX10::0005",
+    "bcbs-lex-consolidated::LEX30::0016",
+    "bcbs-lex-consolidated::LEX20::0003",
+    "bcbs-lex-consolidated::LEX30::0003"
+   ],
+   "hits": [
+    [
+     {
+      "locator": "LEX40.1",
+      "facet": "Basel LEX",
+      "dense_rank": 3,
+      "lexical_rank": 0,
+      "rrf": 0.032018,
+      "rerank": 6.706268310546875
+     }
+    ],
+    [
+     {
+      "locator": "LEX10.8",
+      "facet": "Basel LEX",
+      "dense_rank": 0,
+      "lexical_rank": 5,
+      "rrf": 0.031545,
+      "rerank": 3.381540536880493
+     }
+    ],
+    [
+     {
+      "locator": "LEX30.55",
+      "facet": "Basel LEX",
+      "dense_rank": 6,
+      "lexical_rank": 1,
+      "rrf": 0.031054,
+      "rerank": 4.138297080993652
+     }
+    ],
+    [
+     {
+      "locator": "LEX20.2",
+      "facet": "Basel LEX",
+      "dense_rank": 2,
+      "lexical_rank": 6,
+      "rrf": 0.030798,
+      "rerank": 4.768423557281494
+     }
+    ],
+    [
+     {
+      "locator": "LEX30.2",
+      "facet": "Basel LEX",
+      "dense_rank": 5,
+      "lexical_rank": 3,
+      "rrf": 0.030777,
+      "rerank": 0.4138760268688202
+     }
+    ]
+   ],
+   "claims": [
+    {
+     "text": "The large exposure limit as a share of Tier 1 capital is 15% for a global systemically important bank's (G-SIB)'s exposure to another G-SIB.",
+     "label": "S4",
+     "citation": "Basel LEX, LEX20.1 (in_force; eff. 2019-12-15)",
+     "locator": "LEX20.1",
+     "overlap": 0.917,
+     "align_verdict": "MATCH"
+    },
+    {
+     "text": "For non-G-SIBs, the large exposure limit as a share of Tier 1 capital is 25%.",
+     "label": "S2",
+     "citation": "Basel LEX, LEX10.8 (in_force; eff. 2023-01-01)",
+     "locator": "LEX10.8",
+     "overlap": 0.571,
+     "align_verdict": "FLOOR"
+    }
+   ],
+   "labels": [
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S5"
+   ],
+   "unit_locators": [
+    [
+     "",
+     "LEX40.1",
+     "LEX40.2",
+     "LEX40.3"
+    ],
+    [
+     "LEX10.8"
+    ],
+    [
+     "LEX30.54",
+     "",
+     "LEX30.55",
+     "LEX30.56",
+     "",
+     "",
+     "",
+     "",
+     "LEX30.57",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "LEX20.1",
+     "LEX20.2",
+     "LEX20.3"
+    ],
+    [
+     "LEX30.1",
+     "LEX30.2",
+     ""
+    ]
+   ],
+   "plan_actual": "single_document",
+   "gate_decision": "ANSWERABLE",
+   "gate_reason": "question names Basel LEX — no gate needed",
+   "refused": false,
+   "refusal_reason": "",
+   "config_hash": "qwen3:1.7b|answer_v3_json@6ebc4ed85c45f7d4|t0.0|ctx16384|floor0.0|facet6.0|renderv2|align0.65/0.05",
+   "n_claims": 2,
+   "n_invalid": 0,
+   "error": "",
+   "seconds": 28.5
+  },
+  {
+   "id": "gs-13s",
+   "question": "What did SR 11-7 set out as the core elements of an effective validation framework?",
+   "reference_answer": "SR 11-7 set out three core elements of an effective validation framework: evaluation of conceptual soundness, including developmental evidence; ongoing monitoring, including process verification and benchmarking; and outcomes analysis, including back-testing.",
+   "expected_docs": [
+    "SR 11-7"
+   ],
+   "scenario": "direct",
+   "plan_expected": "single_document",
+   "source_note": "Specific rewording of gs-13 (2026-10-06): names SR 11-7 instead of 'earlier US guidance'. Verified in source.",
+   "expected_strings": [
+    "conceptual soundness",
+    "back-testing"
+   ],
+   "answer": "SR 11-7 set out three core elements of an effective validation framework: evaluation of conceptual soundness, including developmental evidence; ongoing monitoring, including process verification and benchmarking; and outcomes analysis, including back-testing [1]. SR 11-7 also emphasized that ongoing monitoring is essential to evaluate whether changes in products, exposures, activities, clients, or market conditions necessitate adjustment, redevelopment, or replacement of the model, and to verify that any extension of the model beyond its original scope is valid [2].",
+   "contexts": [
+    "Key Elements of Comprehensive Validation\n\nAn effective validation framework should include three core elements:\n\n· Evaluation of conceptual soundness, including developmental evidence\n\n· Ongoing monitoring, including process verification and benchmarking\n\n· Outcomes analysis, including back-testing",
+    "2. Ongoing Monitoring\n\nThe second core element of the validation process is ongoing monitoring. Such monitoring confirms that the model is appropriately implemented and is being used and is performing as intended.\n\nOngoing monitoring is essential to evaluate whether changes in products, exposures, activities, clients, or market conditions necessitate adjustment, redevelopment, or replacement of the model and to verify that any extension of the model beyond its original scope is valid. Any model limitations identified in the development stage should be regularly assessed over time, as part of ongoing monitoring. Monitoring begins when a model is first implemented in production systems for actual business use. This monitoring should continue periodically over time, with a frequency appropriate to the nature of the model, the availability of new data or modeling approaches, and the magnitude of the risk involved. Banks should design a program of ongoing testing and evaluation of model performance along with procedures for responding to any problems that appear. This program should include process verification and benchmarking.\n\nProcess verification checks that all model components are functioning as designed. It includes verifying that internal and external data inputs continue to be accurate, complete, consistent with model purpose and design, and of the highest quality available. Computer code implementing the model should be subject to rigorous quality and change control procedures to ensure that the code is correct, that it cannot be altered except by approved parties, and that all changes are logged and can be audited. System integration can be a challenge and deserves special attention because the model processing component often draws from various sources of data, processes large amounts of data, and then feeds into multiple data repositories and reporting systems. User-developed applications, such as spreadsheets or ad hoc database applications used to generate quantitative estimates, are particularly prone to model risk. As the content or composition of information changes over time, systems may need to be updated to reflect any changes in the data or its use. Reports derived from model outputs should be reviewed as part of validation to verify that they are accurate, complete, and informative, and that they contain appropriate indicators of model performance and limitations.\n\nMany of the tests employed as part of model development should be included in ongoing monitoring and be conducted on a regular basis to incorporate additional information as it becomes available. New empirical evidence or theoretical research may suggest the need to modify or even replace original methods. Analysis of the integrity and applicability of [Page Break]\n\ninternal and external information sources, including information provided by third-party vendors, should be performed regularly.\n\nSensitivity analysis and other checks for robustness and stability should likewise be repeated periodically. They can be as useful during ongoing monitoring as they are during model development. If models only work well for certain ranges of input values, market conditions, or other factors, they should be monitored to identify situations where these constraints are approached or exceeded.\n\nOngoing monitoring should include the analysis of overrides with appropriate documentation. In the use of virtually any model, there will be cases where model output is ignored, altered, or reversed based on the expert judgment of model users. Such overrides are an indication that, in some respect, the model is not performing as intended or has limitations. Banks should evaluate the reasons for overrides and track and analyze override performance. If the rate of overrides is high, or if the override process consistently improves model performance, it is often a sign that the underlying model needs revision or redevelopment.\n\nBenchmarking is the comparison of a given model's inputs and outputs to estimates from alternative internal or external data or models. It can be incorporated in model development as well as in ongoing monitoring. For credit risk models, examples of benchmarks include models from vendor firms or industry consortia and data from retail credit bureaus. Pricing models for securities and derivatives often can be compared with alternative models that are more accurate or comprehensive but also too time consuming to run on a daily basis. Whatever the source, benchmark models should be rigorous and benchmark data should be accurate and complete to ensure a reasonable comparison.\n\nDiscrepancies between the model output and benchmarks should trigger investigation into the sources and degree of the differences, and examination of whether they are within an expected or appropriate range given the nature of the comparison. The results of that analysis may suggest revisions to the model. However, differences do not necessarily indicate that the model is in error. The benchmark itself is an alternative prediction, and the differences may be due to the different data or methods used. If the model and the benchmark match well, that is evidence in favor of the model, but it should be interpreted with caution so the bank does not get a false degree of comfort."
+   ],
+   "docs": [
+    "SR 11-7",
+    "SR 11-7"
+   ],
+   "locators": [
+    "sr-11-7-2011::doc::0011",
+    "sr-11-7-2011::doc::0013"
+   ],
+   "hits": [
+    [
+     {
+      "locator": "Key Elements of Comprehensive Validation",
+      "facet": "SR 11-7",
+      "dense_rank": 0,
+      "lexical_rank": 0,
+      "rrf": 0.032787,
+      "rerank": 3.331224203109741
+     }
+    ],
+    [
+     {
+      "locator": "2. Ongoing Monitoring",
+      "facet": "SR 11-7",
+      "dense_rank": 4,
+      "lexical_rank": 3,
+      "rrf": 0.03101,
+      "rerank": 0.6313862800598145
+     }
+    ]
+   ],
+   "claims": [
+    {
+     "text": "SR 11-7 set out three core elements of an effective validation framework: evaluation of conceptual soundness, including developmental evidence; ongoing monitoring, including process verification and benchmarking; and outcomes analysis, including back-testing.",
+     "label": "S1",
+     "citation": "SR 11-7, Key Elements of Comprehensive Validation (superseded; eff. 2011-04-04)",
+     "locator": "Key Elements of Comprehensive Validation",
+     "overlap": 1.0,
+     "align_verdict": "FLOOR"
+    },
+    {
+     "text": "SR 11-7 also emphasized that ongoing monitoring is essential to evaluate whether changes in products, exposures, activities, clients, or market conditions necessitate adjustment, redevelopment, or replacement of the model, and to verify that any extension of the model beyond its original scope is valid.",
+     "label": "S2",
+     "citation": "SR 11-7, 2. Ongoing Monitoring (superseded; eff. 2011-04-04)",
+     "locator": "2. Ongoing Monitoring",
+     "overlap": 0.962,
+     "align_verdict": "FLOOR"
+    }
+   ],
+   "labels": [
+    "S1",
+    "S2"
+   ],
+   "unit_locators": [
+    [
+     "Key Elements of Comprehensive Validation"
+    ],
+    [
+     "2. Ongoing Monitoring"
+    ]
+   ],
+   "plan_actual": "single_document",
+   "gate_decision": "ANSWERABLE",
+   "gate_reason": "question names SR 11-7 — no gate needed",
+   "refused": false,
+   "refusal_reason": "",
+   "config_hash": "qwen3:1.7b|answer_v3_json@6ebc4ed85c45f7d4|t0.0|ctx16384|floor0.0|facet6.0|renderv2|align0.65/0.05",
+   "n_claims": 2,
+   "n_invalid": 0,
+   "error": "",
+   "seconds": 19.8
+  },
+  {
+   "id": "gs-37s",
+   "question": "Under Basel CAP, what criteria must an instrument meet to count as Common Equity Tier 1, and under Basel SCO, which entities is the framework applied to and on what basis?",
+   "reference_answer": "Under Basel CAP, an instrument must meet all of the criteria set out in CAP10.8 to be included in Common Equity Tier 1; for banks structured as joint stock companies the criteria must be met solely with common shares. Under Basel SCO, the framework is applied on a consolidated basis to internationally active banks; it includes, on a fully consolidated basis, any holding company that is the parent entity within a banking group, and also applies to all internationally active banks at every tier within a banking group.",
+   "expected_docs": [
+    "Basel CAP",
+    "Basel SCO"
+   ],
+   "scenario": "comparison",
+   "plan_expected": "document_fanout",
+   "source_note": "Specific rewording of gs-37 (2026-10-06). CAP10.8; SCO10.1-10.3, verified in source.",
+   "expected_strings": [
+    "common shares",
+    "consolidated basis"
+   ],
+   "answer": "To count as Common Equity Tier 1 under Basel CAP, an instrument must meet all of the criteria outlined in Basel CAP, including being a common share issued by the bank, meeting the specific requirements for Common Equity Tier 1 capital, and not having any features that create an expectation of buyback, redemption, or cancellation. Additionally, it must be issued with the approval of the owners of the issuing bank and clearly disclosed on the balance sheet [1]. The Basel framework is applied to all internationally active banks at every tier within a banking group, on a fully consolidated basis. It applies to all banks, including those that are not parent holding companies, and covers both the banking book and trading book. The framework also applies to stand-alone banks on a basis that does not consolidate assets and liabilities of subsidiaries [2].",
+   "contexts": [
+    "Common shares issued by the bank\n\n10.8 For an instrument to be included in Common Equity Tier 1 capital it must meet all of the criteria that follow. The vast majority of internationally active banks are structured as joint stock companies 1 and for these banks the criteria must be met solely with common shares. In the rare cases where banks need to issue non-voting common shares as part of Common Equity Tier 1, they must be identical to voting common shares of the issuing bank in all respects except the absence of voting rights. 2\n\n(1) Represents the most subordinated claim in liquidation of the bank.\n\n(2) Entitled to a claim on the residual assets that is proportional with its share of issued capital, after all senior claims have been repaid in liquidation (ie has an unlimited and variable claim, not a fixed or capped claim).\n\n(3) Principal is perpetual and never repaid outside of liquidation (setting aside discretionary repurchases or other means of effectively reducing capital in a discretionary manner that is allowable under relevant law).\n\n(4) The bank does nothing to create an expectation at issuance that the instrument will be bought back, redeemed or cancelled nor do the statutory or contractual terms provide any feature which might give rise to such an expectation.\n\n(5) Distributions are paid out of distributable items (retained earnings included). The level of distributions is not in any way tied or linked to the amount paid in at issuance and is not subject to a contractual cap (except to the extent that a bank is unable to pay distributions that exceed the level of distributable items).\n\n(6) There are no circumstances under which the distributions are obligatory. Non payment is therefore not an event of default. Among other things, this requirement prohibits features that require the bank to make payments in kind.\n\n(7) Distributions are paid only after all legal and contractual obligations have been met and payments on more senior capital instruments have been made. This means that there are no preferential distributions, including in respect of other elements classified as the highest quality issued capital.\n\n(8) It is the issued capital that takes the first and proportionately greatest share of any losses as they occur. 3 Within the highest quality capital, each instrument absorbs losses on a going concern basis proportionately and pari passu with all the others.\n\n(9) The paid-in amount is recognised as equity capital (ie not recognised as a liability) for\n\ndetermining balance sheet insolvency.\n\n(10) The paid-in amount is classified as equity under the relevant accounting standards.\n\n(11) It is directly issued and paid-in and the bank cannot directly or indirectly have funded the instrument or the purchase of the instrument.\n\n(12) The paid-in amount is neither secured nor covered by a guarantee of the issuer or related entity 4 or subject to any other arrangement that legally or economically enhances the seniority of the claim.\n\n(13) It is only issued with the approval of the owners of the issuing bank, either given directly by the owners or, if permitted by applicable law, given by the Board of Directors or by other persons duly authorised by the owners.\n\n(14) It is clearly and separately disclosed on the bank's balance sheet. 5",
+    "Footnotes\n\n1 A holding company that is a parent of a banking group may itself have a parent holding company. In some structures, this parent holding company may not be subject to this framework because it is not considered a parent of a banking group.\n\n10.3 The framework will also apply to all internationally active banks at every tier within a banking group, also on a fully consolidated basis (see illustrative chart at the end of this section). 2\n\nFootnotes\n\n2 As an alternative to full sub-consolidation, the application of this framework to the stand-alone bank (ie on a basis that does not consolidate assets and liabilities of subsidiaries) would achieve the same objective, providing the full book value of any investments in subsidiaries and significant minority-owned stakes is deducted from the bank's capital.\n\n10.4 Further, to supplement consolidated supervision, it is essential to ensure that capital recognised in capital adequacy measures is adequately distributed amongst legal entities of a banking group. Accordingly, supervisors should test that individual banks are adequately capitalised on a stand-alone basis.\n\nFAQ\n\nFAQ1\n\nHow should banks treat investments in banks, insurance companies and other financial institutions that are included in the consolidated group in computing the capital ratio for the stand-alone parent bank entity?\n\nThe Basel framework is applied on a consolidated basis to internationally active banks. It captures the risks of a whole banking group. Although the framework recognises the need for adequate capitalisation on a stand-alone basis, it does not prescribe how to measure the solo capital requirements which is left to individual supervisory authorities.\n\n10.5 The diagram below illustrates the scope of application of this framework, where (A) represents the boundary of the predominant banking group, to which the framework is to be applied on a consolidated basis (ie up to holding company level, as described in SCO10.2). With respect to (B), (C) and (D), the framework is also to be applied at lower levels to all internationally active banks on a consolidated basis.",
+    "Significant investments in the capital or other TLAC liabilities of banking, financial and insurance entities that are outside the scope of regulatory consolidation\n\n30.29 The regulatory adjustment described in this section applies to investments in the capital or other TLAC liabilities of banking, financial and insurance entities that are outside the scope of regulatory consolidation 8 where the bank owns more than 10% of the issued common share capital of the issuing entity or where the entity is an affiliate 9 of the bank. In addition:\n\n(1) Investments include direct, indirect and synthetic holdings of capital instruments or other TLAC liabilities. For example, banks should look through holdings of index securities to determine their underlying holdings of capital or other TLAC liabilities. 10\n\n(2) Holdings in both the banking book and trading book are to be included. Capital includes common stock and all other types of cash and synthetic capital instruments (eg subordinated debt). Other TLAC liabilities are defined in CAP30.3 to CAP30.4. It is the net long position that is to be included (ie the gross long position net of short positions in the same underlying exposure where the maturity of the short position\n\neither matches the maturity of the long position or has a residual maturity of at least one year). Banks are also permitted to net gross long positions arising through holdings of index securities against short positions in the same underlying index, as long as the maturity of the short position matches the maturity of the long position or has residual maturity of at least a year.\n\n(3) Underwriting positions in capital instruments or other TLAC liabilities held for five working days or less can be excluded. Underwriting positions held for longer than five working days must be included.\n\n(4) If the capital instrument of the entity in which the bank has invested does not meet the criteria for Common Equity Tier 1, Additional Tier 1, or Tier 2 capital of the bank, the capital is to be considered common shares for the purposes of this regulatory adjustment. 11\n\n(5) National discretion applies to allow banks, with prior supervisory approval, to exclude temporarily certain investments where these have been made in the context of resolving or providing financial assistance to reorganise a distressed institution.",
+    "Introduction\n\n60.1 This chapter sets out how the Basel Framework is to be applied in respect of banks' exposures to cryptoassets. Cryptoassets are defined as private digital assets that depend on cryptography and distributed ledger technologies (DLT) or similar technologies. Digital assets are a digital representation of value, which can be used for payment or investment purposes or to access a good or service.\n\n60.2 Dematerialised securities (securities that have been moved from physical certificates to electronic book-keeping) that are issued through DLT or similar technologies are considered to be within the scope of this chapter and are referred to as tokenised traditional assets, whereas those dematerialised securities that use electronic versions of traditional registers and databases which are centrally administered are not within scope.\n\n60.3 The prudential treatment of central bank digital currencies (CBDCs) is not described within the Basel Framework. The Committee will give further consideration to the treatment of CBDCs as they are issued.\n\n60.4 For the purposes of this chapter, the term \"exposure\" includes on- or off-balance sheet amounts that give rise to credit, market, operational and/or liquidity risks. Certain parts of the chapter, such as the operational risk requirements and the risk management and supervisory review sections, are also applicable to banks' cryptoasset activities, such as custodial services involving the safekeeping or administration of client cryptoassets on a segregated basis, that do not generally give rise to credit, market or liquidity requirements.\n\n60.5 The remainder of this chapter is organised according to the following sections:\n\n(1) Classification conditions: SCO60.6 to SCO60.22.\n\n(2) Banking/trading book boundary, use of internal models and accounting classification: SCO60.23 to SCO60.25.\n\n(3) Minimum capital requirements for credit risk for Group 1 cryptoassets: SCO60.26 to SCO60.39.\n\n(4) Minimum capital requirements for market risk for Group 1 cryptoassets: SCO60.40 to SCO60.51.\n\n(5) Add-on for infrastructure risk for Group 1 cryptoassets: SCO60.52 to SCO60.53.\n\n(6) Minimum capital requirements for Group 2 cryptoassets: SCO60.54 to SCO60.86.\n\n(7) Minimum capital requirements for credit valuation adjustment (CVA) risk: SCO60.87 to SCO60.92.\n\n(8) Minimum capital requirements for counterparty credit risk: SCO60.93 to SCO60.99.\n\n(9) Minimum capital requirements for operational risk: SCO60.100.\n\n(10) Minimum liquidity risk requirements: SCO60.101 to SCO60.112.\n\n(11) Leverage ratio requirements: SCO60.113 to SCO60.114.\n\n(12) Large exposure requirements: SCO60.115.\n\n(13) Group 2 exposure limit: SCO60.116 to SCO60.119.\n\n(14) Bank risk management and supervisory review: SCO60.120 to SCO60.127.\n\n(15) Definitions: SCO60.128.",
+    "[...]\n\nFAQ3 How should exposures to the capital of other financial institutions be valued for the purpose of determining the amount of to be subject to the threshold deduction treatment?\n\nExposures should be valued according to their valuation on the balance sheet of the bank. In this way the exposures captured represents the loss to Common Equity Tier 1 that the bank would suffer if the capital of the financial institution is written-off.\n\nFAQ4 For capital instruments that are required to be phased out from 1 January 2013, the net amount allowed to be recognised each year onwards is determined on a portfolio basis according to CAP90.1 to CAP90.3. Regarding a bank that holds such instruments, ie the investing bank, could the Basel Committee explain how the corresponding deduction approach should be applied during the transitional phase? For example, if a non-common equity instrument is being phased out from Tier 1 by the issuing bank, should the bank use full value of the instrument or the amount recognised by the issuing bank (ie the phased-out value) to determine the size of the holding subject to the deduction treatment?\n\nDuring the period in which instruments that do not meet the Basel III entry criteria are being phased out from regulatory capital (ie from 1 January 2013 to 1 January 2022) banks must use the full value of any relevant capital instruments that they hold to calculate the amount to be subject to the deduction treatment set out in CAP30.21 to CAP30.30. For example, assume that a bank holds a capital instrument with a value of 100 on its balance sheet and also assume that the issuer of the capital instrument is a bank that only recognises 50 in its Tier 1 capital due to the application of the phasing-out requirements of CAP90.1 to CAP90.3. In this case the investing bank must apply the corresponding deduction approach set out in CAP30.21 to CAP30.30 on the basis that it has an investment of 100 in Additional Tier 1 instruments.\n\nInvestments in the capital or other TLAC liabilities of banking, financial and insurance entities that are outside the scope of regulatory consolidation and where the bank does not own more than 10% of the issued common share capital of the entity\n\n30.22 The regulatory adjustment described in this section applies to investments in the capital or other TLAC liabilities of banking, financial and insurance entities that are outside the scope of regulatory consolidation and where the bank does not own more than 10% of the issued common share capital of the entity. These investments are deducted from regulatory capital, subject to a threshold. For the purpose of this regulatory adjustment:\n\n(1) Investments include direct, indirect 5 and synthetic holdings of capital instruments or other TLAC liabilities. For example, banks should look through holdings of index securities to determine their underlying holdings of capital or other TLAC liabilities. 6\n\n(2) Holdings in both the banking book and trading book are to be included. Capital includes common stock and all other types of cash and synthetic capital instruments (eg subordinated debt). Other TLAC liabilities are defined in CAP30.3 and CAP30.4.\n\n(3) For capital instruments, it is the net long position that is to be included (ie the gross long position net of short positions in the same underlying exposure where the maturity of the short position either matches the maturity of the long position or has a residual maturity of at least one year). Banks are also permitted to net gross long positions arising through holdings of index securities against short positions in the same underlying index, as long as the maturity of the short position matches the maturity of the long position or has residual maturity of at least a year. For other TLAC liabilities, it is the gross long position in CAP30.23, CAP30.24 and CAP30.25 and the net long position that is to be included in CAP30.26.\n\n(4) Underwriting positions in capital instruments or other TLAC liabilities held for five working days or less can be excluded. Underwriting positions held for longer than five working days must be included.\n\n(5) If the capital instrument of the entity in which the bank has invested does not meet the criteria for Common Equity Tier 1, Additional Tier 1, or Tier 2 capital of the bank, the capital is to be considered common shares for the purposes of this regulatory adjustment. 7\n\n(6) National discretion applies to allow banks, with prior supervisory approval, to exclude temporarily certain investments where these have been made in the context of resolving or providing financial assistance to reorganise a distressed institution.",
+    "[...]\n\n(b) A bank must not do anything which creates an expectation that the call will be exercised; and\n\n(c) Banks must not exercise a call unless:\n\n(i) They replace the called instrument with capital of the same or better quality and the replacement of this capital is done at conditions which are sustainable for the income capacity of the bank; 6 or\n\n(ii) The bank demonstrates that its capital position is well above the minimum capital requirements after the call option is exercised. 7\n\n(d) The use of tax event and regulatory event calls are permitted within the first five years of a capital instrument, but supervisors will only permit the bank to exercise such a call if in their view the bank was not in a position to anticipate the event at issuance.\n\n(6) Any repayment of principal (eg through repurchase or redemption) must be with prior supervisory approval and banks should not assume or create market expectations that supervisory approval will be given.\n\n(7) Dividend/coupon discretion:\n\n(a) the bank must have full discretion at all times to cancel distributions/payments 8\n\n(b) cancellation of discretionary payments must not be an event of default\n\n(c) banks must have full access to cancelled payments to meet obligations as they fall due\n\n(d) cancellation of distributions/payments must not impose restrictions on the bank except in relation to distributions to common stockholders.\n\n(8) Dividends/coupons must be paid out of distributable items. 9\n\n(9) The instrument cannot have a credit-sensitive dividend feature, that is a dividend/ coupon that is reset periodically based in whole or in part on the banking organisation's credit standing.\n\n(10) The instrument cannot contribute to liabilities exceeding assets if such a balance sheet test forms part of national insolvency law.\n\n(11) Instruments classified as liabilities for accounting purposes must have a principal loss-absorption mechanism. This must generate Common Equity Tier 1 under the relevant accounting standards and the instrument will only receive recognition in Additional Tier 1 up to the minimum level of Common Equity Tier 1 generated by the loss-absorption mechanism. The mechanism must operate through either:\n\n(a) conversion to common shares at an objective pre-specified trigger point of at least\n\n5.125% Common Equity Tier 1; or\n\n(b) a writedown mechanism which allocates losses to the instrument at a prespecified trigger point of at least 5.125% Common Equity Tier 1. The writedown will have the following effects:\n\n(i) Reduce the claim of the instrument in liquidation;\n\n(ii) Reduce the amount repaid when a call is exercised; and\n\n(iii) Partially or fully reduce coupon/dividend payments on the instrument.\n\n(12) The aggregate amount to be written down/converted for all instruments classified as liabilities for accounting purposes on breaching the trigger level must be at least the amount needed to immediately return the bank's Common Equity Tier 1 ratio to the trigger level or, if this is not possible, the full principal value of the instruments.\n\n(13) Neither the bank nor a related party over which the bank exercises control or significant influence can have purchased the instrument, nor can the bank directly or indirectly fund the instrument or the purchase of the instrument.\n\n(14) The instrument cannot have any features that hinder recapitalisation, such as provisions that require the issuer to compensate investors if a new instrument is issued at a lower price during a specified time frame.\n\n(15) If the instrument is not issued out of an operating entity or the holding company in the consolidated group (eg a special purpose vehicle - \"SPV\"), proceeds must be immediately available without limitation to a single operating entity 10 or the holding company in the consolidated group in a form which meets or exceeds all of the other criteria for inclusion in Additional Tier 1 capital.\n\n(16) The terms and conditions must have a provision that requires, at the option of the relevant authority, the instrument to either be written off or converted into common equity upon the occurrence of a trigger event, unless the criteria in CAP10.12 are met. Any compensation paid to instrument holders as a result of a write-off must be paid immediately in the form of common stock (or its equivalent in the case of non-joint stock companies) of either the issuing bank or the parent company of the consolidated group (including any successor in resolution) and must be paid prior to any public sector injection of capital (so that the capital provided by the public sector is not diluted). The issuing bank must maintain at all times all prior authorisation necessary to immediately issue the relevant number of shares specified in the instrument's terms and conditions should the trigger event occur. The trigger event:\n\n(a) is the earlier of:\n\n(i) a decision that a write-off, without which the firm would become non-viable, is necessary, as determined by the relevant authority; and\n\n[...]"
+   ],
+   "docs": [
+    "Basel CAP",
+    "Basel SCO",
+    "Basel CAP",
+    "Basel SCO",
+    "Basel CAP",
+    "Basel CAP"
+   ],
+   "locators": [
+    "bcbs-cap-consolidated::CAP10::0005",
+    "bcbs-sco-consolidated::SCO10::0002",
+    "bcbs-cap-consolidated::CAP30::0017",
+    "bcbs-sco-consolidated::SCO60::0003",
+    "bcbs-cap-consolidated::CAP30::0015",
+    "bcbs-cap-consolidated::CAP10::0007"
+   ],
+   "hits": [
+    [
+     {
+      "locator": "CAP10.8",
+      "facet": "Basel CAP",
+      "dense_rank": 0,
+      "lexical_rank": 3,
+      "rrf": 0.032018,
+      "rerank": 4.813994407653809
+     }
+    ],
+    [
+     {
+      "locator": "Footnotes",
+      "facet": "Basel SCO",
+      "dense_rank": 0,
+      "lexical_rank": 0,
+      "rrf": 0.032787,
+      "rerank": -2.005054473876953
+     }
+    ],
+    [
+     {
+      "locator": "Significant investments in the capital or other TLAC liabilities of banking, financial and insurance entities that are o",
+      "facet": "Basel CAP",
+      "dense_rank": 7,
+      "lexical_rank": 1,
+      "rrf": 0.030835,
+      "rerank": 2.4672112464904785
+     }
+    ],
+    [
+     {
+      "locator": "SCO60.1",
+      "facet": "Basel SCO",
+      "dense_rank": null,
+      "lexical_rank": 3,
+      "rrf": 0.015625,
+      "rerank": -4.360262870788574
+     }
+    ],
+    [
+     {
+      "locator": "Investments in own shares (treasury stock), own other capital instruments or own other TLAC liabilities",
+      "facet": "Basel CAP",
+      "dense_rank": 6,
+      "lexical_rank": 18,
+      "rrf": 0.027584,
+      "rerank": 2.0677690505981445
+     }
+    ],
+    [
+     {
+      "locator": "Additional Tier 1 capital",
+      "facet": "Basel CAP",
+      "dense_rank": 18,
+      "lexical_rank": 6,
+      "rrf": 0.027584,
+      "rerank": 2.475135326385498
+     },
+     {
+      "locator": "Additional Tier 1 capital",
+      "facet": "Basel CAP",
+      "dense_rank": 19,
+      "lexical_rank": 11,
+      "rrf": 0.026389,
+      "rerank": 3.6141486167907715
+     }
+    ]
+   ],
+   "claims": [
+    {
+     "text": "To count as Common Equity Tier 1 under Basel CAP, an instrument must meet all of the criteria outlined in Basel CAP, including being a common share issued by the bank, meeting the specific requirements for Common Equity Tier 1 capital, and not having any features that create an expectation of buyback, redemption, or cancellation. Additionally, it must be issued with the approval of the owners of the issuing bank and clearly disclosed on the balance sheet.",
+     "label": "S1",
+     "citation": "Basel CAP, CAP10.8 (in_force; eff. 2019-12-15)",
+     "locator": "CAP10.8",
+     "overlap": 0.7,
+     "align_verdict": "FLOOR"
+    },
+    {
+     "text": "The Basel framework is applied to all internationally active banks at every tier within a banking group, on a fully consolidated basis. It applies to all banks, including those that are not parent holding companies, and covers both the banking book and trading book. The framework also applies to stand-alone banks on a basis that does not consolidate assets and liabilities of subsidiaries.",
+     "label": "S2",
+     "citation": "Basel SCO, Footnotes (in_force; eff. 2019-12-15)",
+     "locator": "Footnotes",
+     "overlap": 0.861,
+     "align_verdict": "FLOOR"
+    }
+   ],
+   "labels": [
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S5",
+    "S6"
+   ],
+   "unit_locators": [
+    [
+     "CAP10.8",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Footnotes"
+    ],
+    [
+     "Significant investments in the capital or other TLAC liabilities of banking, financial and insurance entities that are o"
+    ],
+    [
+     "SCO60.1",
+     "SCO60.2",
+     "SCO60.3",
+     "SCO60.4",
+     "SCO60.5",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Investments in own shares (treasury stock), own other capital instruments or own other TLAC liabilities"
+    ],
+    [
+     "Additional Tier 1 capital",
+     "Additional Tier 1 capital"
+    ]
+   ],
+   "plan_actual": "document_fanout",
+   "gate_decision": "ANSWERABLE",
+   "gate_reason": "question names Basel CAP, Basel SCO — no gate needed",
+   "refused": false,
+   "refusal_reason": "",
+   "config_hash": "qwen3:1.7b|answer_v3_json@6ebc4ed85c45f7d4|t0.0|ctx16384|floor0.0|facet6.0|renderv2|align0.65/0.05",
+   "n_claims": 2,
+   "n_invalid": 0,
+   "error": "",
+   "seconds": 99.7
+  },
+  {
+   "id": "gs-38s",
+   "question": "Under IFRS 9, what do the 30 and 90 days past due presumptions mean, and under BCBS d403, how is 90 days past due used to classify non-performing exposures?",
+   "reference_answer": "Under IFRS 9, there is a rebuttable presumption that credit risk has increased significantly since initial recognition when contractual payments are more than 30 days past due; it can be rebutted with reasonable and supportable information. Separately, IFRS 9 has a rebuttable presumption that default does not occur later than when a financial asset is 90 days past due, unless an entity has reasonable and supportable information that a more lagging default criterion is more appropriate. Under BCBS d403, a uniform 90 days past due criterion applies to all types of exposure: material exposures more than 90 days past due are non-performing, supplemented by an assessment of the counterparty's unlikeliness to pay; and an exposure can only return to performing when the counterparty has no material exposure more than 90 days past due. Trading book exposures and derivatives are outside the scope of the definition.",
+   "expected_docs": [
+    "IFRS 9 (credit risk extract)",
+    "BCBS d403 (PAP)"
+   ],
+   "scenario": "comparison",
+   "plan_expected": "document_fanout",
+   "source_note": "Specific rewording of gs-38 (2026-10-06). Reference now includes IFRS 9's 90-day default presumption (missing from gs-38). Verified in source.",
+   "expected_strings": [
+    "30 days past due",
+    "90 days past due"
+   ],
+   "answer": "Under IFRS 9, the 30 days past due rebuttable presumption means that if an entity has reasonable and supportable information demonstrating that a financial instrument's credit risk does not significantly increase, it may rebut the presumption and delay the recognition of lifetime expected credit losses. This presumption is based on forward-looking information, including macroeconomic factors, and is not absolute [1]. Under BCBS d403, the 90 days past due criterion is a uniform standard applied to all types of exposure within the scope of non-performing exposures. It is supplemented by considerations for assessing a counterparty's unlikeliness to pay, and it is used to classify exposures as non-performing if they are more than 90 days past due, regardless of the type of exposure or the presence of collateral [2].",
+   "contexts": [
+    "2.1. Main harmonisation features of the definition of non-performing exposures\n\n19. Building on the areas of commonality, the definition of non-performing exposures is designed to provide consistency in banks' practices in credit categorisation mainly for supervisory reporting and disclosure purposes.\n\n20. As explained above, this definition is not intended to replace the accounting concept of impairment or the regulatory concept of default but, if consistently applied by banks, it can provide supervisors with a better understanding of asset quality and improve the comparability of credit risk information reported/disclosed by banks.\n\n21. To this end, the definition of non-performing exposures includes the following harmonisation features that address the main areas of divergence currently observed in credit risk categorisation schemes:\n\n· Scope : the definition will be applied to on-balance sheet loans, debt securities and other amounts due (eg interest and fees) that a bank includes in its banking book for the purpose of computing its capital requirements under the June 2006 International convergence of capital measurement and capital standards ('Basel II'), regardless of their measurement basis under the accounting standards. The definition will also be applied to off-balance sheet items (eg loan commitments and financial guarantees). Exposures that a bank includes in its trading book under Basel II, or that are treated as derivatives, are not within the scope of the definition of non-performing exposures.\n\n· Harmonised recognition criteria : a uniform 90 days past due criterion is applied to all types of exposure within the scope, including those secured by real estate and public sector exposures. 5 The 90 days past due criterion is supplemented by considerations for analysing a counterparty's unlikeliness to pay, for which the definition emphasises the importance of financial analysis.\n\n· Role of collateralisation : collateralisation plays no direct role in the categorisation of nonperforming exposures. Any recourse by the bank shall not be considered in this judgment. Collateral may, however, influence a borrower's economic incentive to pay and, therefore, has an indirect impact on the assessment of a borrower's unlikeliness to pay. Any recourse by the bank shall not be considered in this judgment. Collateral may be one of the inputs, along with other factors, in assessing the borrower's unlikeliness to pay.",
+    "More than 30 days past due rebuttable presumption\n\nThe rebuttable presumption in paragraph 5.5.11 is not an absolute indicator that lifetime expected credit losses should be recognised, but is presumed to be the latest point at which lifetime expected credit losses should be recognised even when using forward-looking information (including macroeconomic factors on a portfolio level). An entity can rebut this presumption. However, it can do so only when it has reasonable and supportable information available that demonstrates that even if contractual payments become more than 30 days past due, this does not represent a significant increase in the credit risk of a financial instrument. For example when non-payment was an administrative oversight, instead of resulting from financial difficulty of the borrower, or the entity has access to historical evidence that demonstrates that there is no correlation between significant increases in the risk of a default occurring and financial assets on which payments are more than 30 days past due, but that evidence does identify such a correlation when payments are more than 60 days past due. B5.5.19 B5.5.20 B5.5.21\n\nAn entity cannot align the timing of significant increases in credit risk and the recognition of lifetime expected credit losses to when a financial asset is regarded as credit-impaired or an entity's internal definition of default.",
+    "3.1. Identification of non-performing exposures\n\n23. Non-performing exposures should always be categorised for the whole exposure, including when non-performance relates to only a part of the exposure, for instance, unpaid interest. For offbalance sheet exposures, such as loan commitments or financial guarantees, the whole exposure is the entire uncancellable nominal amount.\n\n24. The following exposures are considered as non-performing:\n\n(i) all exposures that are 'defaulted' under the Basel framework (eg paragraphs 452 6 and following the Basel II rules text and their subsequent amendments), where applicable; or\n\n(ii) all exposures that are credit-impaired (in the meaning of exposures having experienced a downward adjustment to their valuation due to deterioration of their creditworthiness) according to the applicable accounting framework; 7 or\n\n(iii) all other exposures that are not defaulted or impaired but nevertheless:\n\n· (a) are material exposures that are more than 90 days past due; or\n\n· (b) where there is evidence that full repayment based on the contractual terms, original or, when applicable, modified (eg repayment of principal and interest) is unlikely without the bank's realisation of collateral, whether or not the exposure is current and regardless of the number of days the exposure is past due.\n\n25. The identification of an exposure as non-performing is not intended to affect its categorisation as impaired for accounting purposes 8 or as defaulted in accordance with the regulatory framework.\n\n26. Forborne exposures should be identified as non-performing when they meet the specific criteria provided for in this definition.\n\n27. Collateralisation or received guarantees should have no direct influence on the categorisation of an exposure as non-performing. However, the bank may consider the collateral when assessing a\n\n6 Paragraph 452 of the Basel II framework: a default is considered to have occurred with regard to a particular obligor when either or both of the two following events have taken place.\n\n· The bank considers that the obligor is unlikely to pay its credit obligations to the banking group in full, without recourse by the bank to actions such as realising security (if held).\n\n· The obligor is past due more than 90 days on any material credit obligation to the banking group (footnote 89). Overdrafts will be considered as being past due once the customer has breached an advised limit or been advised of a limit smaller than current outstandings.\n\n· (footnote 89) In the case of retail and public sector entities obligations, for the 90-day figure, a supervisor may substitute a figure of up to 180 days for different products, as it considers appropriate to local conditions. In one member country, local conditions make it appropriate to use a figure of up to 180 days also for lending by its banks to corporates; this applies for a transitional period of five years.\n\n7 In particular, when the accounting framework is IFRS 9, 'impaired exposures' are those that are considered 'credit-impaired' in the meaning of IFRS 9 Appendix A. When the accounting framework is US GAAP, 'impaired exposures' are those exposures for which credit losses are measured under ASC Topic 326 and for which the bank has recorded a partial write-off.\n\n8 Under IFRS 9, the identification of an exposure as non-performing does not necessarily have an effect on the impairment stage in which this exposure is allocated for accounting purposes. Under the US GAAP Current Expected Credit Loss model, the identification of an exposure as non-performing is not intended to affect the estimation of credit losses.\n\nborrower's economic incentive (both positive and negative) to repay under the unlikeliness to repay criteria. Any recourse by the bank shall not be considered in this judgment. The collateralisation or guarantee status does not influence the past-due status, including the counting of past-due days and the determination of the exposure as non-performing, once the materiality and overdue days threshold have been met. When the relevant criteria are met, an exposure should be categorised as nonperforming even if the collateral value exceeds the amount of the past-due exposure.\n\n28. A counterparty is a natural or legal person to which a bank has exposure. When a material exposure to a counterparty is categorised as non-performing, all exposures to that counterparty should be categorised as non-performing. However, for retail exposures as defined in the Basel II standard, exposures can be categorised as non-performing on a transaction-by-transaction basis. In these cases, banks should consider the categorisation status of other exposures to the same counterparty, except in the rare circumstances when this information is not available.\n\n29. When applied, the debtor approach applies at the level of a single counterparty. When a counterparty belongs to a group, designating an exposure to one entity belonging to a group as nonperforming does not mandatorily lead to designating all exposures to the other entities from the same group as such. However, designating the exposure to one of the group entities as non-performing should be one of the inputs, along with the respective financial situation of other entities from the same group, when assessing the creditworthiness and determining the performing or non-performing status of exposures to the other entities in the group.\n\n30. Explanation of terms\n\n· Past due : an exposure where any amount due under the contract (interest, principal, fee or other amount) has not been paid in full at the date when it was due. An exposure should be considered past due from the first day of missed payment, even when the amount of the exposure or the past-due amount, as applicable, is not considered material.\n\n· Material : an exposure that hits the materiality threshold in force in a given jurisdiction as defined by supervisors. Nonetheless, a bank needs to have a categorisation process in place for all exposures. The materiality threshold should be applied by reference to an aggregated exposure or past-due amount determined by supervisors that is connected with the counterparty's debt and not the bank.\n\n[...]",
+    "Impairment (Section 5.5)\n\nAn entity shall apply the impairment requirements in Section 5.5 retrospectively in accordance with IAS 8 subject to paragraphs 7.2.15 and 7.2.18-7.2.20. 7.2.17\n\nAt the date of initial application, an entity shall use reasonable and supportable information that is available without undue cost or effort to determine the credit risk at the date that a financial instrument was initially recognised (or for loan commitments and financial guarantee contracts at the date that the entity became a party to the irrevocable commitment in accordance with paragraph 5.5.6) and compare that to the credit risk at the date of initial application of this Standard. 7.2.18\n\nWhen determining whether there has been a significant increase in credit risk since initial recognition, an entity may apply: 7.2.19\n\n(a) the requirements in paragraphs 5.5.10 and B5.5.22-B5.5.24; and\n\n(b) the rebuttable presumption in paragraph 5.5.11 for contractual payments that are more than 30 days past due if an entity will apply the impairment requirements by identifying significant increases in credit risk since initial recognition for those financial instruments on the basis of past due information.\n\nIf, at the date of initial application, determining whether there has been a significant increase in credit risk since initial recognition would require undue cost or effort, an entity shall recognise a loss allowance at an amount equal to lifetime expected credit losses at each reporting date until that financial instrument is derecognised (unless that financial instrument is low credit risk at a reporting date, in which case paragraph 7.2.19(a) applies). 7.2.20"
+   ],
+   "docs": [
+    "BCBS d403 (PAP)",
+    "IFRS 9 (credit risk extract)",
+    "BCBS d403 (PAP)",
+    "IFRS 9 (credit risk extract)"
+   ],
+   "locators": [
+    "bcbs-pap-d403::doc::0009",
+    "ifrs9-extract::doc::0036",
+    "bcbs-pap-d403::doc::0013",
+    "ifrs9-extract::doc::0021"
+   ],
+   "hits": [
+    [
+     {
+      "locator": "2.1. Main harmonisation features of the definition of non-performing exposures",
+      "facet": "BCBS d403 (PAP)",
+      "dense_rank": 0,
+      "lexical_rank": 2,
+      "rrf": 0.032266,
+      "rerank": 1.345632791519165
+     }
+    ],
+    [
+     {
+      "locator": "More than 30 days past due rebuttable presumption",
+      "facet": "IFRS 9 (credit risk extract)",
+      "dense_rank": 2,
+      "lexical_rank": 1,
+      "rrf": 0.032002,
+      "rerank": 1.919560194015503
+     },
+     {
+      "locator": "More than 30 days past due rebuttable presumption",
+      "facet": "IFRS 9 (credit risk extract)",
+      "dense_rank": null,
+      "lexical_rank": 3,
+      "rrf": 0.015625,
+      "rerank": 1.703418254852295
+     }
+    ],
+    [
+     {
+      "locator": "3.1. Identification of non-performing exposures",
+      "facet": "BCBS d403 (PAP)",
+      "dense_rank": 3,
+      "lexical_rank": 3,
+      "rrf": 0.03125,
+      "rerank": 1.0109726190567017
+     }
+    ],
+    [
+     {
+      "locator": "Impairment (Section 5.5)",
+      "facet": "IFRS 9 (credit risk extract)",
+      "dense_rank": 0,
+      "lexical_rank": 4,
+      "rrf": 0.031778,
+      "rerank": 0.9131933450698853
+     }
+    ]
+   ],
+   "claims": [
+    {
+     "text": "Under IFRS 9, the 30 days past due rebuttable presumption means that if an entity has reasonable and supportable information demonstrating that a financial instrument's credit risk does not significantly increase, it may rebut the presumption and delay the recognition of lifetime expected credit losses. This presumption is based on forward-looking information, including macroeconomic factors, and is not absolute.",
+     "label": "S2",
+     "citation": "IFRS 9 (credit risk extract), More than 30 days past due rebuttable presumption (in_force)",
+     "locator": "More than 30 days past due rebuttable presumption",
+     "overlap": 0.829,
+     "align_verdict": "MATCH"
+    },
+    {
+     "text": "Under BCBS d403, the 90 days past due criterion is a uniform standard applied to all types of exposure within the scope of non-performing exposures. It is supplemented by considerations for assessing a counterparty's unlikeliness to pay, and it is used to classify exposures as non-performing if they are more than 90 days past due, regardless of the type of exposure or the presence of collateral.",
+     "label": "S1",
+     "citation": "BCBS d403 (PAP), 2.1. Main harmonisation features of the definition of non-performing exposures (in_force; eff. 2017-04-04)",
+     "locator": "2.1. Main harmonisation features of the definition of non-performing exposures",
+     "overlap": 0.828,
+     "align_verdict": "FLOOR"
+    }
+   ],
+   "labels": [
+    "S1",
+    "S2",
+    "S3",
+    "S4"
+   ],
+   "unit_locators": [
+    [
+     "2.1. Main harmonisation features of the definition of non-performing exposures"
+    ],
+    [
+     "More than 30 days past due rebuttable presumption",
+     "More than 30 days past due rebuttable presumption"
+    ],
+    [
+     "3.1. Identification of non-performing exposures"
+    ],
+    [
+     "Impairment (Section 5.5)"
+    ]
+   ],
+   "plan_actual": "document_fanout",
+   "gate_decision": "ANSWERABLE",
+   "gate_reason": "question names BCBS d403 (PAP), IFRS 9 (credit risk extract) — no gate needed",
+   "refused": false,
+   "refusal_reason": "",
+   "config_hash": "qwen3:1.7b|answer_v3_json@6ebc4ed85c45f7d4|t0.0|ctx16384|floor0.0|facet6.0|renderv2|align0.65/0.05",
+   "n_claims": 2,
+   "n_invalid": 0,
+   "error": "",
+   "seconds": 56.4
+  },
+  {
+   "id": "gs-45s",
+   "question": "Under SR 11-7, which model components and which types of models (in-house or third-party) should be subject to validation?",
+   "reference_answer": "All model components, including input, processing and reporting, should be subject to validation; this applies equally to models developed in-house and to those purchased from or developed by vendors or consultants. The rigor and sophistication of validation should be commensurate with the bank's overall use of models, the complexity and materiality of its models, and the size and complexity of the bank's operations.",
+   "expected_docs": [
+    "SR 11-7"
+   ],
+   "scenario": "direct",
+   "plan_expected": "single_document",
+   "source_note": "Specific rewording of gs-45 (2026-10-06). Question hints at 'in-house or third-party' - slightly easier than gs-45. Verified in source.",
+   "expected_strings": [
+    "All model components",
+    "vendors"
+   ],
+   "answer": "All model components, including input, processing, and reporting, should be subject to validation; this applies equally to models developed in-house and to those purchased from or developed by vendors or consultants [1]. Validation should be performed by staff with appropriate incentives, competence, and influence, and it applies to both in-house and third-party models [1].",
+   "contexts": [
+    "V. MODEL VALIDATION\n\nModel validation is the set of processes and activities intended to verify that models are performing as expected, in line with their design objectives and business uses. Effective validation helps ensure that models are sound. It also identifies potential limitations and assumptions, and assesses their possible impact. As with other aspects of effective challenge, model validation should be performed by staff with appropriate incentives, competence, and influence.\n\nAll model components, including input, processing, and reporting, should be subject to validation; this applies equally to models developed in-house and to those purchased from or developed by vendors or consultants. The rigor and sophistication of validation should be commensurate with the bank's overall use of models, the complexity and materiality of its models, and the size and complexity of the bank's operations.\n\nValidation involves a degree of independence from model development and use. Generally, validation should be done by people who are not responsible for development or use and do not have a stake in whether a model is determined to be valid. Independence is not an end in itself but rather helps ensure that incentives are aligned with the goals of model validation. While independence may be supported by separation of reporting lines, it should be judged by actions and outcomes, since there may be additional ways to ensure objectivity and prevent bias. As a practical matter, some validation work may be most effectively done by model developers and users; it is essential, however, that such validation work be subject to critical review by an independent party, who should conduct additional activities to ensure proper validation. Overall, the quality of the process is judged by the manner in which models are subject to critical review. This could be determined by evaluating the extent and clarity of documentation, the issues identified by objective parties, and the actions taken by management to address model issues.\n\nIn addition to independence, banks can support appropriate incentives in validation through compensation practices and performance evaluation standards that are tied directly to the quality of model validations and the degree of critical, unbiased review. In addition, corporate culture plays a role if it establishes support for objective thinking and encourages questioning and challenging of decisions.\n\nStaff doing validation should have the requisite knowledge, skills, and expertise. A high level of technical expertise may be needed because of the complexity of many models, both in structure and in application. These staff also should have a significant degree of familiarity with the line of business using the model and the model's intended use. A model's developer is an important source of information but cannot be relied on as an objective or sole source on which to base an assessment of model quality.\n\nStaff conducting validation work should have explicit authority to challenge developers and users and to elevate their findings, including issues and deficiencies. The individual or unit to whom those staff report should have sufficient influence or stature within the [Page Break]\n\nPage 9\n\nbank to ensure that any issues and deficiencies are appropriately addressed in a timely and substantive manner. Such influence can be reflected in reporting lines, title, rank, or designated responsibilities. Influence may be demonstrated by a pattern of actual instances in which models, or the use of models, have been appropriately changed as a result of validation.\n\nThe range and rigor of validation activities conducted prior to first use of a model should be in line with the potential risk presented by use of the model. If significant deficiencies are noted as a result of the validation process, use of the model should not be allowed or should be permitted only under very tight constraints until those issues are resolved. If the deficiencies are too severe to be addressed within the model's framework, the model should be rejected. If it is not feasible to conduct necessary validation activities prior to model use because of data paucity or other limitations, that fact should be documented and communicated in reports to users, senior management, and other relevant parties. In such cases, the uncertainty about the results that the model produces should be mitigated by other compensating controls. This is particularly applicable to new models and to the use of existing models in new applications.\n\nValidation activities should continue on an ongoing basis after a model goes into use, to track known model limitations and to identify any new ones. Validation is an important check on model use during periods of benign economic and financial conditions, when estimates of risk and potential loss can become overly optimistic, and when the data at hand may not fully reflect more stressed conditions. Ongoing validation activities help to ensure that changes in markets, products, exposures, activities, clients, or business practices do not create new model limitations. For example, if credit risk models do not incorporate underwriting changes in a timely manner, flawed and costly business decisions could be made before deterioration in model performance becomes apparent.\n\nBanks should conduct a periodic review-at least annually but more frequently if warranted-of each model to determine whether it is working as intended and if the existing validation activities are sufficient. Such a determination could simply affirm previous validation work, suggest updates to previous validation activities, or call for additional validation activities. Material changes to models should also be subject to validation. It is generally good practice for banks to ensure that all models undergo the full validation process, as described in the following section, at some fixed interval, including updated documentation of all activities.\n\nEffective model validation helps reduce model risk by identifying model errors, corrective actions, and appropriate use. It also provides an assessment of the reliability of a given model, based on its underlying assumptions, theory, and methods. In this way, it provides information about the source and extent of model risk. Validation also can reveal deterioration in model performance over time and can set thresholds for acceptable levels of error, through analysis of the distribution of outcomes around expected or predicted values. If outcomes fall consistently outside this acceptable range, then the models should be redeveloped. [Page Break]",
+    "Validation of Vendor and Other Third-Party Products\n\nThe widespread use of vendor and other third-party products-including data, parameter values, and complete models-poses unique challenges for validation and other model risk management activities because the modeling expertise is external to the user and because some components are considered proprietary. Vendor products should nevertheless be incorporated into a bank's broader model risk management framework following the same principles as applied to in-house models, although the process may be somewhat modified. [Page Break]\n\nAs a first step, banks should ensure that there are appropriate processes in place for selecting vendor models. Banks should require the vendor to provide developmental evidence explaining the product components, design, and intended use, to determine whether the model is appropriate for the bank's products, exposures, and risks. Vendors should provide appropriate testing results that show their product works as expected. They should also clearly indicate the model's limitations and assumptions and where the product's use may be problematic. Banks should expect vendors to conduct ongoing performance monitoring and outcomes analysis, with disclosure to their clients, and to make appropriate modifications and updates over time.\n\nBanks are expected to validate their own use of vendor products. External models may not allow full access to computer coding and implementation details, so the bank may have to rely more on sensitivity analysis and benchmarking. Vendor models are often designed to provide a range of capabilities and so may need to be customized by a bank for its particular circumstances. A bank's customization choices should be documented and justified as part of validation. If vendors provide input data or assumptions, or use them to build models, their relevance for the bank's situation should be investigated. Banks should obtain information regarding the data used to develop the model and assess the extent to which that data is representative of the bank's situation. The bank also should conduct ongoing monitoring and outcomes analysis of vendor model performance using the bank's own outcomes.\n\nSystematic procedures for validation help the bank to understand the vendor product and its capabilities, applicability, and limitations. Such detailed knowledge is necessary for basic controls of bank operations. It is also very important for the bank to have as much knowledge in-house as possible, in case the vendor or the bank terminates the contract for any reason, or if the vendor is no longer in business. Banks should have contingency plans for instances when the vendor model is no longer available or cannot be supported by the vendor."
+   ],
+   "docs": [
+    "SR 11-7",
+    "SR 11-7"
+   ],
+   "locators": [
+    "sr-11-7-2011::doc::0010",
+    "sr-11-7-2011::doc::0015"
+   ],
+   "hits": [
+    [
+     {
+      "locator": "V. MODEL VALIDATION",
+      "facet": "SR 11-7",
+      "dense_rank": 0,
+      "lexical_rank": 1,
+      "rrf": 0.032522,
+      "rerank": 4.819332122802734
+     }
+    ],
+    [
+     {
+      "locator": "Validation of Vendor and Other Third-Party Products",
+      "facet": "SR 11-7",
+      "dense_rank": 1,
+      "lexical_rank": 0,
+      "rrf": 0.032522,
+      "rerank": 1.9665756225585938
+     }
+    ]
+   ],
+   "claims": [
+    {
+     "text": "All model components, including input, processing, and reporting, should be subject to validation; this applies equally to models developed in-house and to those purchased from or developed by vendors or consultants.",
+     "label": "S1",
+     "citation": "SR 11-7, V. MODEL VALIDATION (superseded; eff. 2011-04-04)",
+     "locator": "V. MODEL VALIDATION",
+     "overlap": 1.0,
+     "align_verdict": "MATCH"
+    },
+    {
+     "text": "Validation should be performed by staff with appropriate incentives, competence, and influence, and it applies to both in-house and third-party models.",
+     "label": "S1",
+     "citation": "SR 11-7, V. MODEL VALIDATION (superseded; eff. 2011-04-04)",
+     "locator": "V. MODEL VALIDATION",
+     "overlap": 0.917,
+     "align_verdict": "FLOOR"
+    }
+   ],
+   "labels": [
+    "S1",
+    "S2"
+   ],
+   "unit_locators": [
+    [
+     "V. MODEL VALIDATION"
+    ],
+    [
+     "Validation of Vendor and Other Third-Party Products"
+    ]
+   ],
+   "plan_actual": "single_document",
+   "gate_decision": "ANSWERABLE",
+   "gate_reason": "question names SR 11-7 — no gate needed",
+   "refused": false,
+   "refusal_reason": "",
+   "config_hash": "qwen3:1.7b|answer_v3_json@6ebc4ed85c45f7d4|t0.0|ctx16384|floor0.0|facet6.0|renderv2|align0.65/0.05",
+   "n_claims": 2,
+   "n_invalid": 0,
+   "error": "",
+   "seconds": 30.8
+  }
+ ]
+}
