@@ -42,7 +42,7 @@ Open **http://localhost:8501** and ask a question.
 Try:
 - *Under Basel CAP, what criteria must an instrument meet to count as Common Equity Tier 1, and under Basel SCO, which entities is the framework applied to and on what basis ?*
 - *How does IFRS9 use 30 days past due?*
-- *What are the three core elements of validation under SR 11-7 and what does each involve?*- 
+- *What are the three core elements of validation under SR 11-7 and what does each involve?*
 
 ---
 
