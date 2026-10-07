@@ -40,9 +40,9 @@ Open **http://localhost:8501** and ask a question.
 **First run downloads ~7.5 GB** (app ~1.5 GB, Ollama + model ~5 GB, Qdrant + index ~0.6 GB, Phoenix ~0.4 GB). Nothing is built on your machine; the images come ready from `ghcr.io/anujagarwal-git`.
 
 Try:
-- *Under Basel LEX, when is an exposure defined as a large exposure?*
-- *Under BCBS d403, what criteria must be met before a non-performing exposure can be recategorised as performing?*
-- *What are the three core elements of validation under SR 11-7 and what does each involve?*
+- *Under Basel CAP, what criteria must an instrument meet to count as Common Equity Tier 1, and under Basel SCO, which entities is the framework applied to and on what basis ?*
+- *How does IFRS9 use 30 days past due?*
+- *What are the three core elements of validation under SR 11-7 and what does each involve?*- 
 
 ---
 
