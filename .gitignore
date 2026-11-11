@@ -1,4 +1,4 @@
-﻿# Python cache
+# Python cache
 __pycache__/
 *.pyc
 
@@ -45,8 +45,11 @@ desktop.ini
 Deep-Learning/**/*.csv
 Deep-Learning/**/*.parquet
 
-# Traditional-ML/bank-full.csv is 4.4 MB and stays tracked — small enough to
+# Traditional-ML/02-bank-marketing-propensity/data/bank-full.csv is 4.4 MB and stays tracked — small enough to
 # keep the project reproducible.
+
+# Local scratch code that is not part of any project (kept on disk, not shared)
+Deep-Learning/_scratch/
 
 # RAG mentor memory file (local only)
 MENTOR_PROGRESS.md

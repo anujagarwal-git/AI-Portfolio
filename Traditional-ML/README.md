@@ -1,54 +1,24 @@
-# AI-Portfolio
-
 # Traditional Machine Learning
 
-This folder contains projects and learning related to traditional machine learning algorithms.
+Classic machine learning on banking problems, built with scikit-learn pipelines and XGBoost. Each project has its own folder with a README, the notebook(s) and the data.
 
-## Topics Covered
+| # | Project | Business question | Best result |
+|---|---|---|---|
+| 01 | [Loan Approval Prediction](01-loan-approval-prediction/) | Will this home-loan application be approved? | F1 0.90 (test) |
+| 02 | [Term Deposit Propensity Model](02-bank-marketing-propensity/) | Which customers will buy a term deposit after a call? | F1 0.44, AUC 0.74 (test) |
 
-- Linear Regression
+## Techniques covered
 
-- Logistic Regression
+- Logistic regression, decision trees, random forest, XGBoost, linear / ridge / lasso regression
+- Feature selection: correlation, Lasso, RFE, chi-square, mutual information, VIF, permutation importance, SHAP
+- Pipelines with `ColumnTransformer` (imputation, encoding, scaling inside cross-validation)
+- Class imbalance: class weights, `scale_pos_weight`, decision-threshold tuning
+- Model evaluation: precision, recall, F1, ROC-AUC, cross-validation, grid search
 
-- Decision Trees
+## Setup
 
-- Random Forest
+```bash
+pip install pandas numpy scikit-learn xgboost shap statsmodels matplotlib seaborn jupyter
+```
 
-- XGBoost
-
-- Feature Engineering
-
-- Feature Selection
-
-- SHAP Explainability
-
-- Model Evaluation
-
-## Tools & Libraries
-
-- Python
-
-- Pandas
-
-- NumPy
-
-- Scikit-learn
-
-- XGBoost
-
-- SHAP
-
-- Matplotlib
-
-- Seaborn
-
-## Future Projects
-
-- Customer Churn Prediction
-
-- Loan Default Prediction
-
-- Customer Lifetime Value
-
-- Fraud Detection
-
+Open a notebook from inside its project folder, so the relative `data/` paths resolve.
