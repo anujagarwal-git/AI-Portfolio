@@ -1,4 +1,4 @@
-# AI Portfolio — Credit Risk × AI
+# AI Portfolio — Banking × AI
 
 Applied AI and machine learning projects on banking and credit-risk problems, from traditional machine learning to deep learning and a regulatory RAG assistant.
 
